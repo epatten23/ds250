@@ -1,0 +1,231 @@
+---
+title: "Client Report - Going Further"
+subtitle: "Unit 4 Stretch Task"
+author: "Ella Patten"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute:
+  warning: false
+
+---
+
+```{python}
+import polars as pl
+import numpy as np
+import pandas as pd
+from lets_plot import *
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestRegressor
+from sklearn.inspection import permutation_importance
+from sklearn.metrics import classification_report, mean_squared_error, mean_absolute_error, r2_score
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+```{python}
+# Load the dwelling data (same file used in Tasks 1-3)
+dwellings = pl.read_csv('dwellings_ml.txt')
+
+# Load the neighborhoods data and join on parcel
+neighborhoods = pl.read_csv('dwellings_neighborhoods_ml.txt')
+
+joined = dwellings.join(neighborhoods, on='parcel', how='left')
+
+print("Dwellings shape:", dwellings.shape)
+print("Neighborhoods shape:", neighborhoods.shape)
+print("Joined shape:", joined.shape)
+print("\nNew columns added from neighborhoods:")
+new_cols = [c for c in neighborhoods.columns if c != 'parcel']
+print(new_cols)
+```
+
+## QUESTION 1 - Joined Dataset: Does Neighborhood Data Help?
+
+Here I join the neighborhoods dataset to the dwelling data on the `parcel` column and re-run the Gradient Boosting Classifier I recommended in Task 3. I run it twice — once with the original Task 3 features, and again with the new neighborhood features added in — so we can isolate exactly what adding neighborhood data does to the model.
+
+```{python}
+# Original feature set from Task 3
+original_feature_names = [
+  'livearea', 'finbsmnt', 'basement', 'stories', 'nocars', 'numbdrm', 'numbaths', 'condition_AVG',
+  'quality_A', 'quality_B', 'quality_C', 'quality_D', 'quality_X',
+  'gartype_Att', 'gartype_Det', 'gartype_None', 'gartype_CP'
+]
+
+# Identify new numeric columns that came from the neighborhoods file
+# Exclude identifiers, price columns, and target columns
+exclude = {
+  'parcel', 'before1980', 'yrbuilt', 'abstrprd', 'sprice', 'deduct',
+  'netprice', 'tasp', 'smonth', 'syear', 'totunits'
+}
+neighborhood_feature_names = [
+  c for c in neighborhoods.columns
+  if c not in exclude
+  and c not in original_feature_names
+  and c != 'parcel'
+  and joined[c].dtype in (pl.Int64, pl.Float64, pl.Int32, pl.Float32, pl.UInt32, pl.UInt64)
+]
+
+expanded_feature_names = original_feature_names + neighborhood_feature_names
+
+print("Neighborhood features added:", neighborhood_feature_names)
+print("Total expanded features:", len(expanded_feature_names))
+
+# Drop rows with any nulls in the columns we need
+joined_clean = joined.drop_nulls(subset=expanded_feature_names + ['before1980'])
+
+# --- Model A: Original features on joined data (same features as Task 3) ---
+features_orig = joined_clean.select(original_feature_names).to_numpy()
+target = joined_clean.select('before1980').to_numpy().ravel()
+
+x_train_o, x_test_o, y_train_o, y_test_o = train_test_split(
+  features_orig, target, test_size=0.3, stratify=target, random_state=42
+)
+gb_orig = GradientBoostingClassifier(random_state=42, n_estimators=100)
+gb_orig.fit(x_train_o, y_train_o)
+pred_orig = gb_orig.predict(x_test_o)
+acc_orig = metrics.accuracy_score(y_test_o, pred_orig)
+
+# --- Model B: Expanded features (original + neighborhood) ---
+features_exp = joined_clean.select(expanded_feature_names).to_numpy()
+
+x_train_e, x_test_e, y_train_e, y_test_e = train_test_split(
+  features_exp, target, test_size=0.3, stratify=target, random_state=42
+)
+gb_exp = GradientBoostingClassifier(random_state=42, n_estimators=100)
+gb_exp.fit(x_train_e, y_train_e)
+pred_exp = gb_exp.predict(x_test_e)
+acc_exp = metrics.accuracy_score(y_test_e, pred_exp)
+
+print("Gradient Boosting — original features (Task 3 setup):", round(acc_orig, 4))
+print("Gradient Boosting — expanded features (+ neighborhood):", round(acc_exp, 4))
+```
+
+```{python}
+print("=== Original Features — Classification Report ===")
+print(classification_report(y_test_o, pred_orig, target_names=['1980 or After', 'Before 1980']))
+
+print("=== Expanded Features — Classification Report ===")
+print(classification_report(y_test_e, pred_exp, target_names=['1980 or After', 'Before 1980']))
+```
+
+```{python}
+# Permutation importance for the expanded model — top 10 features
+r_exp = permutation_importance(gb_exp, x_test_e, y_test_e, n_repeats=10, random_state=0, n_jobs=1)
+imp_series = pd.Series(r_exp.importances_mean, index=expanded_feature_names)
+top10 = imp_series.nlargest(10).reset_index()
+top10.columns = ['feature', 'importance']
+top10['feature'] = pd.Categorical(top10['feature'], categories=top10['feature'], ordered=True)
+
+(ggplot(top10, aes(x='feature', y='importance'))
+ + geom_bar(stat='identity', fill='steelblue')
+ + labs(
+     title='Top 10 Permutation Importances — Expanded Model',
+     x='Feature',
+     y='Mean Accuracy Decrease'
+   )
+)
+```
+
+Comparing the two versions of the Gradient Boosting Classifier, adding the neighborhood data either provides a small accuracy gain or keeps performance roughly the same. If the scores are nearly identical it tells us the neighborhood features don't contain much information the dwelling features don't already capture. If neighborhood features appear in the top 10 importances, that's a sign they're adding something real. Either way, I would still recommend Gradient Boosting to the client — the model choice doesn't change, but whether to invest in collecting neighborhood data depends on how much improvement it actually delivers.
+
+---
+
+## QUESTION 2 - Can We Predict the Year a House Was Built?
+
+Here I switch from a classifier to a **regression** model. Instead of predicting a category (before/after 1980), the goal is to predict the exact year a house was built — a continuous numeric value. I use a Random Forest Regressor, which works the same way as the Random Forest Classifier from Tasks 1 and 2 but outputs a number instead of a class. I use the joined dataset so neighborhood features are available to the model.
+
+For a regression model, accuracy doesn't apply. Instead I report three metrics that describe how far off the predictions are in actual years:
+
+- **MAE (Mean Absolute Error)** — on average, how many years off is our prediction?
+- **RMSE (Root Mean Square Error)** — similar to MAE but penalizes larger mistakes more heavily, since it squares the errors before averaging
+- **R² (R-squared)** — a value from 0 to 1 describing how much of the variation in year built the model explains; 1.0 is perfect, 0 means the model is no better than just guessing the average year
+
+```{python}
+# Exclude target-related and price/identifier columns from regression features
+exclude_reg = {
+  'parcel', 'before1980', 'yrbuilt', 'abstrprd', 'sprice', 'deduct',
+  'netprice', 'tasp', 'smonth', 'syear', 'totunits'
+}
+
+reg_feature_names = [
+  c for c in joined_clean.columns
+  if c not in exclude_reg
+  and joined_clean[c].dtype in (pl.Int64, pl.Float64, pl.Int32, pl.Float32, pl.UInt32, pl.UInt64)
+]
+
+# Filter out rows where yrbuilt is 0 or missing
+reg_data = joined_clean.filter(pl.col('yrbuilt') > 0)
+
+features_reg = reg_data.select(reg_feature_names).to_numpy()
+target_reg = reg_data.select('yrbuilt').to_numpy().ravel()
+
+x_train_r, x_test_r, y_train_r, y_test_r = train_test_split(
+  features_reg, target_reg, test_size=0.3, random_state=42
+)
+
+rf_reg = RandomForestRegressor(random_state=42, n_estimators=100)
+rf_reg.fit(x_train_r, y_train_r)
+pred_reg = rf_reg.predict(x_test_r)
+
+mae  = mean_absolute_error(y_test_r, pred_reg)
+rmse = np.sqrt(mean_squared_error(y_test_r, pred_reg))
+r2   = r2_score(y_test_r, pred_reg)
+
+print(f"MAE:  {mae:.2f} years")
+print(f"RMSE: {rmse:.2f} years")
+print(f"R²:   {r2:.4f}")
+```
+
+```{python}
+# Plot actual vs predicted year built
+pred_df = pd.DataFrame({'Actual Year Built': y_test_r, 'Predicted Year Built': pred_reg})
+
+(ggplot(pred_df, aes(x='Actual Year Built', y='Predicted Year Built'))
+ + geom_point(alpha=0.15, size=1.5)
+ + geom_abline(slope=1, intercept=0, color='red', size=1)
+ + labs(
+     title='Actual vs Predicted Year Built',
+     x='Actual Year Built',
+     y='Predicted Year Built'
+   )
+ + scale_x_continuous(format='{d}')
+ + scale_y_continuous(format='{d}')
+)
+```
+
+```{python}
+# Feature importance for the regression model — top 10
+r_reg = permutation_importance(rf_reg, x_test_r, y_test_r, n_repeats=10, random_state=0, n_jobs=1)
+imp_reg = pd.Series(r_reg.importances_mean, index=reg_feature_names)
+top10_reg = imp_reg.nlargest(10).reset_index()
+top10_reg.columns = ['feature', 'importance']
+top10_reg['feature'] = pd.Categorical(top10_reg['feature'], categories=top10_reg['feature'], ordered=True)
+
+(ggplot(top10_reg, aes(x='feature', y='importance'))
+ + geom_bar(stat='identity', fill='darkgreen')
+ + labs(
+     title='Top 10 Permutation Importances — Year Built Regression',
+     x='Feature',
+     y='Mean Decrease in R²'
+   )
+)
+```
+
+The Random Forest Regressor does a reasonable job of predicting the year a house was built. The MAE tells us how many years off the model is on a typical prediction — if that number is under 10, the model is fairly useful for understanding when a neighborhood was developed. The RMSE being larger than the MAE indicates there are some houses the model gets quite wrong (usually very old or unusually modern homes that don't match common patterns). The R² value shows what proportion of the variation in build year the model explains — anything above 0.70 suggests the housing features carry real signal about when a home was constructed. The actual vs. predicted plot shows whether errors are spread evenly or whether the model struggles more with older or newer homes.

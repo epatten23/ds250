@@ -1,0 +1,29 @@
+```{python}
+# %%
+# Read in libraries
+import pandas as pd
+import numpy as np
+from lets_plot import *
+LetsPlot.setup_html(isolated_frame=True)
+url = 'https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv'
+```
+
+```{python}
+# 1
+df = pd.read_csv(url, encoding='unicode_escape', skiprows=[1])
+
+seen_col = df.columns[1]  # "Have you seen any of the 6 films in the Star Wars franchise?"
+
+total = df[seen_col].notna().sum()
+seen_any = (df[seen_col] == 'Yes').sum()
+pct = seen_any / total
+print(f"{pct:.4f}")
+```
+
+```{python}
+# 2
+males = df[df['Gender'] == 'Male']
+seen_male = (males[seen_col] == 'Yes').sum()
+pct_male = seen_male / len(males)
+print(f"{pct_male:.4f}")
+```

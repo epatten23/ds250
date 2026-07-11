@@ -1,0 +1,151 @@
+---
+title: "Client Report - Missing values"
+subtitle: "Unit 2 Task 3"
+author: "Ella Patten"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+# import all needed libraries
+import polars as pl
+import requests #new for reading in JSON
+import io       #new for reading in JSON
+import numpy as np
+from lets_plot import *
+from polars import selectors as cs
+import pyarrow
+import pandas as pd
+
+LetsPlot.setup_html(isolated_frame=True)
+
+#load in URL
+
+url = "https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json"
+response = requests.get(url)
+df = pl.read_json(io.BytesIO(response.content))
+
+clean = df.with_columns(pl.selectors.starts_with("num_of").cast(pl.Int64, strict=False)).with_columns(
+        pl.selectors.starts_with("num_of").replace(-999, None),
+        pl.selectors.starts_with("minutes_").replace(-999, None))
+# finding the median and mean for select data columns
+median = (clean.select(pl.selectors.starts_with("minutes_delayed"))).median().cast(pl.Float64)
+
+mean = (clean.select(pl.selectors.starts_with("num_of"))).mean().cast(pl.Float64)
+
+
+# inserting the medians and means into null value
+results = clean.with_columns(    
+  [pl.col(c).fill_null(median[c][0]) for c in median.columns] +
+  [pl.col(c).fill_null(mean[c][0]) for c in mean.columns])
+
+```
+## Question 1
+
+__Which delay is the worst delay? Keep working with the cleaned dataset you created in the previous task. Compare the proportion of flights delayed due to Carrier, to Security, and to Late Aircraft. Show this comparison in a Chart and a Table. Describe your results__
+
+The highest proportion of delayed flights is becuase of late aircraft. We discover this by finding the sum of the three selected delay types and diving that by the total number of flights delayed, discovering which type of delay is the most frequent. 
+
+```{python}
+# Calculate proportions
+total_flights = results["num_of_flights_total"].sum()
+
+summary = (
+    results
+    .select([
+        "num_of_delays_carrier",
+        "num_of_delays_late_aircraft",
+        "num_of_delays_security",
+    ])
+    .sum()
+    .unpivot(
+        on=["num_of_delays_carrier", "num_of_delays_late_aircraft", "num_of_delays_security"],
+        variable_name="delay_type",
+        value_name="num_delays"
+    )
+    .with_columns(
+        (pl.col("num_delays") / total_flights).alias("proportion")
+    )
+    .to_pandas()
+)
+# Chart
+summary["delay_type"] = ["Carrier", "Late Aircraft", "Security"]
+
+(
+    ggplot(summary, aes(x="delay_type", y="proportion", fill="delay_type"))
+    + geom_bar(stat="identity")
+    + scale_y_continuous(format=".1%")
+    + labs(
+        title="Proportion of Flights Delayed by Cause",
+        x="Delay Type",
+        y="Proportion of Total Flights",
+        fill="Delay Type"
+    )
+)
+```
+
+## Question 2
+__Create another chart that shows the proportion of delays for each reason (Carrier, Security, and Late Aircraft) across all 7 airports. Describe your results__
+
+Here we use the same data from the chart above to examine the proportion of flights delayed by each delay type across airports, sorted alphabetically. Late Aircraft delays are consistently the highest across most airports.
+
+
+```{python}
+airport_data = (
+    results
+    .group_by("airport_code")
+    .agg([
+        pl.col("num_of_delays_carrier").sum(),
+        pl.col("num_of_delays_late_aircraft").sum(),
+        pl.col("num_of_delays_security").sum(),
+    ])
+    .with_columns(
+        total_selected = pl.col("num_of_delays_carrier") + pl.col("num_of_delays_late_aircraft") + pl.col("num_of_delays_security")
+    )
+    .with_columns([
+        (pl.col("num_of_delays_carrier") / pl.col("total_selected")).alias("Carrier"),
+        (pl.col("num_of_delays_late_aircraft") / pl.col("total_selected")).alias("Late Aircraft"),
+        (pl.col("num_of_delays_security") / pl.col("total_selected")).alias("Security"),
+    ])
+    .unpivot(
+        on=["Carrier", "Late Aircraft", "Security"],
+        index="airport_code",
+        variable_name="delay_type",
+        value_name="proportion"
+    )
+    .to_pandas()
+)
+
+(
+    ggplot(airport_data, aes(x="airport_code", y="proportion", fill="delay_type"))
+    + geom_bar(stat="identity", position="fill")
+    + scale_y_continuous(format=".0%")
+    + labs(
+        title="Share of Delays by Cause Across Airports",
+        x="Airport",
+        y="Proportion of Delays",
+        fill="Delay Type"
+    )
+)
+
+
+```

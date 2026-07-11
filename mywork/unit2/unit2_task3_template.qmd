@@ -1,0 +1,102 @@
+---
+title: "Client Report - Missing values"
+subtitle: "Unit 2 Task 3"
+author: "Ella Patten"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import requests #new for reading in JSON
+import io       #new for reading in JSON
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+url = "https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json"
+response = requests.get(url)
+df = pl.read_json(io.BytesIO(response.content))
+```
+
+## QUESTION 1
+
+1. __Convert values to missing__ Start with a fresh copy of the flights dataset by reading it in from the link provided above (as opposed to starting with the dataset you ended with in the last assignment). Identify data values that are problematic, non-sense or impossible and change them to be missing. In your report include one record example (one row) from your clean data, in the raw JSON format. Your example should display at least one missing value so that we can verify it was done correctly. (Note: JSON will convert NaN's to null). Describe your process for finding values that needed to be changed, and how you changed them.
+
+_Describe your results and analysis here_
+
+```{python}
+# Include and execute your code here
+clean = df.with_columns(pl.selectors.starts_with("num_of").cast(pl.Int64, strict=False)).with_columns(
+        pl.selectors.starts_with("num_of").replace(-999, None),
+        pl.selectors.starts_with("minutes_").replace(-999, None))
+
+print(clean.select("airport_code", pl.selectors.starts_with("num_of")).filter(pl.any_horizontal(pl.selectors.starts_with("num_of").is_null())).head(1))
+
+
+```
+
+## QUESTION 2
+
+2. __Filling in missing data__ For all the "minutes_delayed" columns, fill in any missing values with the median of that column. For the "num_of" columns, fill in missing values with that column's mean.
+
+_Nothing to write/report for this question_
+
+```{python}
+# Include and execute your code here
+median = (clean.select(pl.selectors.starts_with("minutes_delayed"))).median().cast(pl.Float64)
+
+mean = (clean.select(pl.selectors.starts_with("num_of"))).mean().cast(pl.Float64)
+
+medians = clean.with_columns(    
+  [pl.col(c).fill_null(median[c][0]) for c in median.columns] +
+  [pl.col(c).fill_null(mean[c][0]) for c in mean.columns])
+
+print(medians.select("airport_code", pl.selectors.starts_with("num_of")).filter(pl.any_horizontal(pl.selectors.starts_with("num_of").is_null())))
+
+```
+
+## QUESTION 3
+ 
+3. __Display a histogram for num_of_delays_carrier and for minutes_delayed_nas (2 separate histograms in total). Comment on the shape of each one. Also report the mean of each of these columns now that missing values have been filled in.__
+
+We can see that there were lots of null values, because the mean and median values have a huge spike. The mean of "num_of_delays_carrier" went from null to 691.29 while the median of "minutes_delayed_nas" went from 35660 to 37683 when all the null and nan values were filled. I added in a color filter to be able to see which airports were responsible for the data. 
+
+```{python}
+# Include and execute your code here
+(ggplot(medians, aes(x="num_of_delays_carrier", color = "airport_code")) + geom_histogram()
+)
+```
+
+```{python}
+(ggplot(medians, aes(x="minutes_delayed_nas", color = "airport_code")) + geom_histogram()
+)
+```
+
+
+```{python}
+print(df.filter(pl.col("month") == "n/a").height)
+```

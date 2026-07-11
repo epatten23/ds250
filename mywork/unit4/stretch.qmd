@@ -1,0 +1,51 @@
+---
+title: "Client Report - Show me!"
+subtitle: "Unit 4 Task 3"
+author: "Ella Patten"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+
+```{python}
+import pandas
+import polars as pl
+import numpy as np
+from lets_plot import *
+LetsPlot.setup_html(isolated_frame=True)
+from sklearn.model_selection import train_test_split
+import numpy 
+from sklearn import metrics
+df = pl.read_csv('dwellings_ml.txt')
+
+feature_names = [
+  'livearea','finbsmnt','basement','stories','nocars','numbdrm','numbaths','condition_AVG',
+  'quality_A','quality_B','quality_C','quality_D','quality_X',
+  'gartype_Att','gartype_Det','gartype_None','gartype_CP'
+]
+
+features = df.select(feature_names).to_numpy()
+target = df.select('before1980').to_numpy().ravel()
+
+x_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.34, random_state=76)
+
+```

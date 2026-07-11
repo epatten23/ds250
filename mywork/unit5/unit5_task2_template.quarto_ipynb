@@ -1,0 +1,338 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report - Star Wars for Dummies\"\n",
+        "subtitle: \"Unit 5 Task 3\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "a747d84b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl \n",
+        "import numpy as np\n",
+        "from lets_plot import *\n",
+        "import polars.selectors as cs\n",
+        "# add the additional libraries you need to import for ML here\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)\n",
+        "\n",
+        "data_url = \"https://byuidatascience.github.io/DS250-Course-Polars/Data/StarWars_with_emails.csv\""
+      ],
+      "id": "5421b98b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<!-- The first 10 rows are not part of the datset we need.\n",
+        "\n",
+        "The columns headers are split across two rows. We need to clean and simplify the column headers-->"
+      ],
+      "id": "39afe508"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Read in and tidy up the first row\n",
+        "a = pl.Series(pl.read_csv(data_url, skip_rows = 10, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n",
+        "# Note the non-aschii character in the column \"Do you consider yourself to be a fan of the Expanded Universe\". (column AF if you open it in Excel). \n",
+        "\n",
+        "# BTW: Detecting what it is and where can be difficult\n",
+        "\n",
+        "# Lossy means that invalid utf8 values are replaced with � characters. When using other encodings than utf8 or utf8-lossy, the input is first decoded in memory with python. Defaults to utf8...ignore_errors = True does not replace the non-utf8 character with a blank space like you would hope\n",
+        "\n",
+        "a[2] = \"seen_any\" #simply overwrite the value at index 2\n",
+        "\n",
+        "# Rather than changing each column header manually,\n",
+        "# here we use regex to apply changes more efficiently\n",
+        "a = (\n",
+        "  a.str.replace(r\".+seen.+\", \"seen_\")\n",
+        "   .str.replace(r\".+rank.+\", \"rank_\")\n",
+        "   .str.replace(r\"(.+favorably.+)\", \"fav_\")\n",
+        "   .fill_null(strategy = \"forward\")\n",
+        "\n",
+        "   .str.replace(\"\\uFFFD+\", \"\") #this gets rid of the question marks in a diamond characters \n",
+        "   .str.strip_chars()\n",
+        "   .str.to_lowercase()\n",
+        "   .str.replace_all(\" \", \"_\")\n",
+        "   .str.replace(r\"location(.+)\", \"location\")\n",
+        "\n",
+        ")\n",
+        "a[3] = \"star_wars_fan\"\n",
+        "a[30] = \"who_shot_first\"\n",
+        "a[31] = \"know_expanded_universe\"\n",
+        "a[32] = \"expanded_universe_fan\"\n",
+        "a[33] = \"star_trek_fan\""
+      ],
+      "id": "54e333b4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<!-- Combine series q and a into one series to be used as column names-->"
+      ],
+      "id": "85110578"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "b = pl.Series(pl.read_csv(data_url, skip_rows = 11, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n",
+        "\n",
+        "b = (\n",
+        "  b.str.replace(r\"Star Wars: (Episode \\w+) .+\", \"${1}\")\n",
+        "   .str.replace(\"Response\", \"\")\n",
+        "   .str.replace_all(\" \", \"_\")\n",
+        "   .fill_null(\"\")\n",
+        "   .str.strip_chars()\n",
+        ")"
+      ],
+      "id": "05ed1208",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#Now combine the two series, each of which contains part of the desired column header\n",
+        "new_names = (a + b).to_list()\n",
+        "\n",
+        "# Read in the data, skipping over the column header rows\n",
+        "# and use 'new_names' as the column headers\n",
+        "df = pl.read_csv(data_url, skip_rows=12, has_header=False, new_columns = new_names )"
+      ],
+      "id": "83e50561",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Executive Summary\n",
+        " - This is a high level overview of the analysis, including the problem statement, the data used, and the main findings. It should be concise and to the point, summarizing the key insights/recommendations without going into too much detail. These are usually bullet points, no graphs. PLEASE EXPLICITLY STATE IN THIS SECTION WHETHER YOU DID THE STRETCH OR NOT!\n",
+        "\n",
+        "\n",
+        "## Methods\n",
+        "\n",
+        "this is a high level overview of the methods used in the analysis. This should include an explanation of data preparation steps, especially how you dealt with each categorical variable and why. Showing the resulting or original distribution of variables may be helpful. Describe how you handled missing values and outliers. How did/might your decisions impact results? Explain any feature engineering steps you took. This is also where you will put the graphs you recreated to show you validated the dataset and that it matches the article.\n",
+        "\n",
+        "Regex is used to parse the email column and extract each respondent's first name, last name, and email domain into separate columns. Each pattern uses markers in the email — such as the start of a string and the @ symbol — to isolate the relevant text."
+      ],
+      "id": "61595940"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Extract first name, last name, and email domain from the email column\n",
+        "df = df.with_columns([\n",
+        "    pl.col(\"email\").str.strip_chars().str.extract(r\"^([a-zA-Z]+)\", 1).alias(\"first_name\"),\n",
+        "    pl.col(\"email\").str.strip_chars().str.extract(r\"([a-zA-Z]+)@\", 1).alias(\"last_name\"),\n",
+        "    pl.col(\"email\").str.strip_chars().str.extract(r\"@([a-zA-Z0-9]+)\", 1).alias(\"email_domain\"),\n",
+        "])\n",
+        "df.select([\"email\", \"first_name\", \"last_name\", \"email_domain\"]).head(5)"
+      ],
+      "id": "f5f74c3d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Here we count the email domains, normalizing all domains to lowercase before grouping, since the raw data contains inconsistent capitalization. This ensures that variations of the same domain are counted together rather than treated as separate entries."
+      ],
+      "id": "4754ce39"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Unique email domain count\n",
+        "domain_count = (df.with_columns(pl.col(\"email_domain\").str.to_lowercase()).group_by(\"email_domain\").len().sort(\"len\", descending=True))\n",
+        "domain_count"
+      ],
+      "id": "713c782e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The dataset is filtered to respondents who have seen at least one Star Wars film. Rather than relying on the self-reported `seen_any` column, we check the six individual film columns directly — if any are non-null, the respondent has seen at least one film."
+      ],
+      "id": "a09e2c7a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Respondents who have seen at least one Star Wars film\n",
+        "seen_cols = [c for c in df.columns if c.startswith(\"seen_\") and c != \"seen_any\"]\n",
+        "df_seen = df.filter(\n",
+        "    pl.any_horizontal([pl.col(c).is_not_null() for c in seen_cols])\n",
+        ")\n",
+        "\n",
+        "print(df_seen.head(5))"
+      ],
+      "id": "36d822c2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Here we pull apart the answers that are numbers yet currently formatted as strings and turn them into numbers. When it's a range the data point set is the lowest number in the range. The categories must be numeric for machine learning, so each category is mapped to an integer. This preserves the ordering of each variable and keeps the conversion simple and consistent. Now we can use 'df_for_ml' as our machine learning ready data set!"
+      ],
+      "id": "f989c427"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Age\n",
+        "age_map = {\"18-29\": 18, \"30-44\": 30, \"45-60\": 45, \"> 60\": 60}\n",
+        "\n",
+        "df_for_ml = (\n",
+        "    df_seen\n",
+        "    .with_columns(pl.col(\"age\").replace(age_map).cast(pl.Int32).alias(\"age_num\"))\n",
+        "    .drop(\"age\")\n",
+        ")\n",
+        "# Education\n",
+        "education_ = {\n",
+        "    \"Less than high school degree\": 1,\n",
+        "    \"High school degree\": 2,\n",
+        "    \"Some college or Associate degree\": 3,\n",
+        "    \"Bachelor degree\": 4,\n",
+        "    \"Graduate degree\": 5,\n",
+        "}\n",
+        "\n",
+        "df_for_ml = (\n",
+        "    df_for_ml\n",
+        "    .with_columns(pl.col(\"education\").replace(education_).cast(pl.Int32).alias(\"education_num\"))\n",
+        "    .drop(\"education\")\n",
+        ")\n",
+        "# Income\n",
+        "income = {\n",
+        "    \"$0 - $24,999\": 0,\n",
+        "    \"$25,000 - $49,999\": 25000,\n",
+        "    \"$50,000 - $99,999\": 50000,\n",
+        "    \"$100,000 - $149,999\": 100000,\n",
+        "    \"$150,000+\": 150000,\n",
+        "}\n",
+        "\n",
+        "df_for_ml = (\n",
+        "    df_for_ml\n",
+        "    .with_columns(pl.col(\"household_income\").replace(income).cast(pl.Int64).alias(\"income_num\"))\n",
+        "    .drop(\"household_income\")\n",
+        ")\n",
+        "# Favorability\n",
+        "fav = {\n",
+        "    \"Very favorably\": 5,\n",
+        "    \"Somewhat favorably\": 4,\n",
+        "    \"Neither favorably nor unfavorably (neutral)\": 3,\n",
+        "    \"Somewhat unfavorably\": 2,\n",
+        "    \"Very unfavorably\": 1,\n",
+        "    \"Unfamiliar (N/A)\": 0,\n",
+        "}\n",
+        "\n",
+        "fav_columns = [c for c in df.columns if c.startswith(\"fav_\")]\n",
+        "\n",
+        "df_for_ml = (\n",
+        "    df_for_ml\n",
+        "    .with_columns([pl.col(c).replace(fav).cast(pl.Int32) for c in fav_columns])\n",
+        ")\n",
+        "\n",
+        "# show head of complete data set \n",
+        "df_for_ml.select([\"age_num\", \"education_num\", \"income_num\"] + fav_columns).head(5)"
+      ],
+      "id": "120f08fc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Results\n",
+        " this is a more in-depth explanation of results. A classification report and feature importance graphs belong here.\n",
+        "_type your report here, you will likely want multiple code chunks and text intermingled_\n",
+        "\n",
+        "\n",
+        "Here is the shape of the table for all the respondents who have seen at least one film, adding up to a total of 835."
+      ],
+      "id": "edeedacc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Shape of table for respondents who have seen at least one Star Wars film\n",
+        "print(df_seen.shape)"
+      ],
+      "id": "5788b5d4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        " ## Conclusion: \n",
+        " this is where you will discuss the implication of the results, including any limitations of the analysis, and recommendations for actions/future work. It may feel repetitive to the executive summary, but it should be more detailed and include any additional insights you gained from the analysis. -->\n",
+        "\n",
+        "_type your write-up and analysis here_"
+      ],
+      "id": "41119137"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

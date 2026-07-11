@@ -1,0 +1,117 @@
+---
+title: "Client Report - Famous Names"
+subtitle: "Unit 1 Task 3"
+author: "Ella Patten"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import polars.selectors as cs
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+df = pl.read_csv("https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed69e7f1/names_year_csv.csv")
+```
+
+
+
+## QUESTION 1
+
+<!-- Make sure at least one of your charts includes reference marks!! -->
+
+__Make a new column that represents the total number of babies with your name for only those states in which you have lived. (If you have only ever lived in one state, pick at least one other state so you get practice summing across columns). Make a graph displaying that total for your name over time.__
+
+Here we can see the usage of the name "Ella" in the states Colorado, Texas, and Montana, all states in which I have already lived. The red dots signifies my birth year, in which we see a huge peak in the usage of the name "Ella"
+
+```{python}
+# Q1
+my_name = df.select(
+  "name",
+  cs.by_name("year", "CO", "TX", "MT")
+).filter(pl.col("name")=="Ella").with_columns(total = pl.col("CO") + pl.col("TX") + pl.col("MT"))
+dot = my_name.filter(pl.col("year") == 2005).with_columns(
+    pl.lit("My Birth Year").alias("lab")
+)
+
+(ggplot(my_name, aes(x="year", y="total"))
++ geom_line()
++ geom_text(aes(label="lab"), nudge_y=50, color="red", data=dot)
++ geom_point(data=dot, color="red", size=4)
++ labs(title="Usage of the Name 'Ella' Over Time in States Colorado, Texas and Montana")
++ scale_x_continuous(format="{d}")
+)
+
+```
+
+
+## QUESTION 2
+
+1. __Let's look at a name that is special for members of the church: Brigham. For each year, calculate what proportion of babies named Brigham were born in Idaho and Utah? Make a graph displaying the proportion over time.__  
+
+This graph shows us the usage of the name "Brigham" in the states of Idaho and Utah. We can see that since the late 2010's, the usage of the name has been declining in these states. 
+
+```{python}
+# Q2
+brigham_name = df.select(
+  'name',
+  cs.by_name("UT", "ID", "year", "Total")
+).filter(pl.col("name") == ("Brigham")).with_columns(total_new = pl.col("UT")+pl.col ("ID"))
+brigham_name = brigham_name.with_columns(proportion = pl.col("total_new")/ pl.col("Total"))
+(ggplot(
+  brigham_name, aes(x = "year", y="proportion"))
++ geom_line()
++ labs(title = "Proportion of the name 'Brigham' in Utah and Idaho vs other states")
++ scale_x_continuous(format="{d}")
+)
+```
+
+<!-- Make sure at least one of your charts includes reference marks!! -->
+
+## QUESTION 3
+
+1. __Consider doing some data validation. For the name David, calculate a sum of all 50 states and District of Columbia for each year. Now compare that total to the value in the 'Total' column. In which years, if any, do they not agree?__
+
+This graph has two lines- even though it may be hard to see. One line shows us the total included in the csv file. The blue line shows the calculated total from all 50 states after summing the columns. We can see that there are no discrepencies and the data is good data.  
+
+```{python}
+# Q3
+david = df.filter(pl.col("name") == ("David")).with_columns(summed_total = pl.sum_horizontal(df.columns[2:53]))
+new_david = david.select("name", "year", "Total", "summed_total")
+(ggplot(new_david, aes(x = "year", y = "Total"))
++ geom_line()
++ geom_line(aes(y = "summed_total"), color = "blue")
++ labs(y = "total", title = "Use of the name 'David' calculated vs. totaled given")
++ scale_x_continuous(format="{d}")
+)
+
+
+
+```

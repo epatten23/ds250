@@ -1,0 +1,143 @@
+---
+title: "Client Report - Project 0: Introduction"
+subtitle: "Course DS 250"
+author: "Ella Patten"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+from palmerpenguins import load_penguins
+df = load_penguins()
+```
+
+## QUESTION|TASK 1
+
+__Include the tables created from [PY4DS: CH2 Data Visualization](https://aeturrell.github.io/python4DS/data-visualise.html) used to create the above chart (Hint: copy the code from 2.2.1. The penguins data frame and paste each in the cells below)__
+
+
+```{python}
+# Include and execute your code here
+penguins = load_penguins()
+penguins
+```
+
+_In the table above, we find information on three different species of penguins, including body mass and flipper length, which we analyze in the graph below. There we find a consistent correlation between flipper length and body mass, with the Gentoo species being larger than both the Chinstrap and Adélie species._
+
+```{python}
+# Include and execute your code here
+penguins = load_penguins()
+(
+    ggplot(penguins, aes(x="flipper_length_mm", y="body_mass_g"))
+    + geom_point(aes(color="species", shape="species"))
+    + geom_smooth(method="lm")
+    + labs(
+        title="Body mass and flipper length",
+        subtitle="Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+        x="Flipper length (mm)",
+        y="Body mass (g)",
+        color="Species",
+        shape="Species",
+    )
+)
+```
+
+
+## QUESTION|TASK 2
+
+__Recreate the example charts from [PY4DS: CH2 Data Visualization](https://aeturrell.github.io/python4DS/data-visualise.html) of the textbook. (Hint: copy the chart code from 2.2.3. Creating a plot, one plot for each cell below)__
+
+
+```{python}
+# Include and execute your code here
+penguins["species"] = penguins["species"].astype("category")
+penguins.head()
+
+```
+
+_Across all of these graphs, we can find that the Gentoo species is consistently larger than the other species. The data also reveals that the species are distributed acrossed each island in a distinct manner._
+
+```{python}
+# Include and execute your code here
+(ggplot(penguins, aes(x="body_mass_g")) + geom_histogram(binwidth=200)
+    + labs(
+        title="Distribution of Penguin Body Mass",
+        subtitle="A histogram of body mass (g) across all observed penguin species",
+        x="Body Mass (g)",
+        y="Count",
+    ))
+
+```
+
+
+```{python}
+# Include and execute your code here
+(ggplot(penguins, aes(x="body_mass_g", color="species")) + geom_density(size=2)
+    + labs(
+        title="Body Mass Density by Penguin Species",
+        x="Density",
+        y="Body Mass (g)",
+    ))
+
+```
+
+
+```{python}
+# Include and execute your code here
+(ggplot(penguins, aes(x="island", fill="species")) 
++ geom_bar(position="fill")
+    + labs(
+        title="Penguin Species Distribution Across Islands",
+        subtitle="Proportional distribution of Adélie, Gentoo, and Chinstrap penguins across different islands",
+        x="Count",
+        y="Island",
+    )
+)
+
+```
+
+
+```{python}
+# Include and execute your code here
+(
+    ggplot(penguins, aes(x="flipper_length_mm", y="body_mass_g"))
+    + geom_point(aes(color="species", shape="island"))
+    + labs(
+      title="Relationship Between Flipper Length and Body Mass",
+      subtitle="Scatter plot of penguins colored by species and shaped by island",
+      x="Flipper Length (mm)",
+      y="Body Mass (g)",
+    ))
+
+```

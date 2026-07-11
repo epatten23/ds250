@@ -1,0 +1,160 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report - Missing values\"\n",
+        "subtitle: \"Unit 2 Task 3\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "5862409b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl\n",
+        "import requests #new for reading in JSON\n",
+        "import io       #new for reading in JSON\n",
+        "import numpy as np\n",
+        "from lets_plot import *\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)"
+      ],
+      "id": "fc996334",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "url = \"https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json\"\n",
+        "response = requests.get(url)\n",
+        "df = pl.read_json(io.BytesIO(response.content))"
+      ],
+      "id": "cbc903a8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 1\n",
+        "\n",
+        "1. __Convert values to missing__ Start with a fresh copy of the flights dataset by reading it in from the link provided above (as opposed to starting with the dataset you ended with in the last assignment). Identify data values that are problematic, non-sense or impossible and change them to be missing. In your report include one record example (one row) from your clean data, in the raw JSON format. Your example should display at least one missing value so that we can verify it was done correctly. (Note: JSON will convert NaN's to null). Describe your process for finding values that needed to be changed, and how you changed them.\n",
+        "\n",
+        "_Describe your results and analysis here_"
+      ],
+      "id": "01476dde"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "clean = df.with_columns(pl.selectors.starts_with(\"num_of\").cast(pl.Int64, strict=False)).with_columns(\n",
+        "        pl.selectors.starts_with(\"num_of\").replace(-999, None),\n",
+        "        pl.selectors.starts_with(\"minutes_\").replace(-999, None))\n",
+        "\n",
+        "print(clean.select(\"airport_code\", pl.selectors.starts_with(\"num_of\")).filter(pl.any_horizontal(pl.selectors.starts_with(\"num_of\").is_null())).head(1))"
+      ],
+      "id": "399e9915",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 2\n",
+        "\n",
+        "2. __Filling in missing data__ For all the \"minutes_delayed\" columns, fill in any missing values with the median of that column. For the \"num_of\" columns, fill in missing values with that column's mean.\n",
+        "\n",
+        "_Nothing to write/report for this question_"
+      ],
+      "id": "54f468a5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "median = (clean.select(pl.selectors.starts_with(\"minutes_delayed\"))).median().cast(pl.Float64)\n",
+        "\n",
+        "mean = (clean.select(pl.selectors.starts_with(\"num_of\"))).mean().cast(pl.Float64)\n",
+        "\n",
+        "medians = clean.with_columns(    \n",
+        "  [pl.col(c).fill_null(median[c][0]) for c in median.columns] +\n",
+        "  [pl.col(c).fill_null(mean[c][0]) for c in mean.columns])\n",
+        "\n",
+        "print(medians.select(\"airport_code\", pl.selectors.starts_with(\"num_of\")).filter(pl.any_horizontal(pl.selectors.starts_with(\"num_of\").is_null())))"
+      ],
+      "id": "0aa643ff",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 3\n",
+        " \n",
+        "3. __Display a histogram for num_of_delays_carrier and for minutes_delayed_nas (2 separate histograms in total). Comment on the shape of each one. Also report the mean of each of these columns now that missing values have been filled in.__\n",
+        "\n",
+        "_Describe your results and analysis here_"
+      ],
+      "id": "372f166d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "(ggplot(medians, aes(x=\"num_of_delays_carrier\"))\n",
+        "    + geom_histogram())\n",
+        "\n",
+        "(ggplot(medians, aes(x = \"minutes_delayed_nas\"))\n",
+        "    + geom_histogram())"
+      ],
+      "id": "cc03619f",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
