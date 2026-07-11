@@ -57,6 +57,15 @@ website:
         - text: "Project 3"
           file: Cleansing_Projects/project3.qmd
         - text: "---"
+        - text: "Unit 2: Flights Task 1"
+          file: Cleansing_Projects/unit2_task1.qmd
+        - text: "---"
+        - text: "Unit 2: Flights Task 2"
+          file: Cleansing_Projects/unit2_task2.qmd
+        - text: "---"
+        - text: "Unit 2: Flights Task 3"
+          file: Cleansing_Projects/unit2_task3.qmd
+        - text: "---"
     - title: "Data Exploration"
       style: "docked"
       background: light
@@ -72,6 +81,24 @@ website:
         - text: "---"
         - text: "Project 3"
           file: Cleansing_Exploration/project3.qmd
+        - text: "---"
+        - text: "Unit 1: Names Task 1"
+          file: Cleansing_Exploration/unit1_task1.qmd
+        - text: "---"
+        - text: "Unit 1: Names Task 2"
+          file: Cleansing_Exploration/unit1_task2.qmd
+        - text: "---"
+        - text: "Unit 1: Names Task 3"
+          file: Cleansing_Exploration/unit1_task3.qmd
+        - text: "---"
+        - text: "Unit 3: Baseball Task 1"
+          file: Cleansing_Exploration/unit3_task1.qmd
+        - text: "---"
+        - text: "Unit 3: Baseball Task 2"
+          file: Cleansing_Exploration/unit3_task2.qmd
+        - text: "---"
+        - text: "Unit 3: Baseball Task 3"
+          file: Cleansing_Exploration/unit3_task3.qmd
         - text: "---"
     - title: "Story Telling"
       style: "docked"
@@ -89,6 +116,9 @@ website:
         - text: "Project 3"
           file: Story_Telling/project3.qmd
         - text: "---"
+        - text: "Unit 5: Star Wars Final Report"
+          file: Story_Telling/unit5_final_report.qmd
+        - text: "---"
     - title: "Machine Learning"
       style: "docked"
       background: light
@@ -104,6 +134,12 @@ website:
         - text: "---"
         - text: "Project 3"
           file: Machine_Learning/project3.qmd
+        - text: "---"
+        - text: "Unit 4: Predictions Task 1"
+          file: Machine_Learning/unit4_task1.qmd
+        - text: "---"
+        - text: "Unit 4: Predictions Task 3"
+          file: Machine_Learning/unit4_task3.qmd
         - text: "---"
     - title: "Full Stack"
       style: "docked"

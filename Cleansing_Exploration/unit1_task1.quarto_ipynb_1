@@ -1,0 +1,180 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report - Exploring Names\"\n",
+        "subtitle: \"Unit 1 Task 1\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "29934ee2"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl\n",
+        "import numpy as np\n",
+        "from lets_plot import *\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)"
+      ],
+      "id": "7ba4e5df",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n",
+        "\n",
+        "# Include and execute your code here\n",
+        "df = pl.read_csv(\"https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed69e7f1/names_year_csv.csv\")"
+      ],
+      "id": "6d8ac229",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 1\n",
+        "\n",
+        "__What was the earliest year that the name ‘Felisha’ was used?__\n",
+        "\n",
+        "The earliest year Felisha was used was 1964. It was used 20 times, 9 times in Texas alone. We can find this by filtering the name and sorting by the year. "
+      ],
+      "id": "31e0db70"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Q1\n",
+        "print(df.filter(name = \"Felisha\").sort('year').head(1))"
+      ],
+      "id": "94dc6b5a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 2\n",
+        "\n",
+        "__What year had the most babies named 'David'? How many babies were named 'David' that year?__\n",
+        "\n",
+        "This data captures 114 years that the name David was used. It was used with the most frequency in the year 1955, when there were 86,389 people named David."
+      ],
+      "id": "4ab1e32c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Q2\n",
+        "print(df.filter(name = \"David\").sort('Total', descending=True).head(1))"
+      ],
+      "id": "7767bc80",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 3\n",
+        "\n",
+        "__What year did your name hit its peak? How many babies were named your name in that year?__\n",
+        "\n",
+        "My name, Ella, hit it's peak in 2010, being used 9,883 times. "
+      ],
+      "id": "3b38aaa6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Q3\n",
+        "print(df.filter(name = \"Ella\").sort(\"Total\", descending=True).head(1))"
+      ],
+      "id": "bd5be185",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 4\n",
+        "\n",
+        "__In the most recent year, what was the most common female name in Utah?__ \n",
+        "\n",
+        "Here we see the most common female name in Utah in the year 2024 is Olivia. Here we are assuming the names Oliver, Liam, Henry, and William are all male names. This assumption leaves us with Olivia, which was used 215 times in the state of Utah in the year 2024. "
+      ],
+      "id": "3ec46dfa"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Q5\n",
+        "dfq4 = df.select (\n",
+        "  pl.col ('name'),\n",
+        "  pl.col(\"year\"),\n",
+        "  pl.col(\"UT\"),\n",
+        ")\n",
+        "dfq4 = dfq4.sort(\"year\", \"UT\", descending = True)\n",
+        "print(dfq4.head())"
+      ],
+      "id": "3607f572",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---"
+      ],
+      "id": "f22a219d"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

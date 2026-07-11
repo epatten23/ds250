@@ -1,0 +1,99 @@
+---
+title: "Client Report - What's in a Name?"
+subtitle: "Unit 1 Task 2"
+author: "Ella Patten"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{python}
+import polars as pl
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+df = pl.read_csv("https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed69e7f1/names_year_csv.csv")
+```
+
+## QUESTION 1
+
+<!-- Make sure at least one of your charts includes reference marks!! -->
+
+__How does your name at your birth year compare to its use historically? Your must provide a chart. The years labels on your charts should not include a comma.__ 
+
+Here this red dot marks the year that I was born. We can see that my name was used when it was almost at its peak and was very popular in the years surrounding my birth year. 
+
+```{python}
+# Q1
+ella = df.filter(pl.col("name")=="Ella")
+(ggplot(ella, aes(x="year", y="Total")) 
++ geom_line() 
++ geom_point(data= ella.filter(pl.col("year") == 2005), color="red",size = 4)
++ labs(title = "Usage of the Name 'Tiana' Over Time", x="Year", y = "Usage of the name Ella")
++ scale_x_continuous(format="{d}")
+)
+```
+
+
+## QUESTION 2
+
+__Think of a unique name from a famous movie. Plot the usage of that name and see how changes line up with the movie release. Does it look like the movie had an effect on usage?__  
+
+The green dot marks when the movie "Princess and the Frog" was released, with the main character being named Tiana. We can see that after the movie was released, the name was used more frequently, but still not as frequently as the years before the movie was even released. 
+
+```{python}
+# Q2
+
+Tiana = df.filter(pl.col("name")=="Tiana")
+(ggplot(Tiana, aes(x="year", y="Total")) 
++ geom_line() 
++ geom_point(data= Tiana.filter(pl.col("year") == 2009), color="green",size = 4)
++ labs(title = "Usage of the Name 'Tiana' Over Time", x="Year", y = "Usage of the name Tiana")
++ scale_x_continuous(format="{d}")
+)
+```
+
+## QUESTION 3
+
+__Mary, Martha, Peter, and Paul are all Christian names. From 1920 - 2000, compare the name usage of each of the four names in a single chart. What trends do you notice?__  
+
+While not all of the names have the same amount of uses, they have a similar trend in that between 1920 and 1970 they were used frequently and after 1970 they began to be used less and less frequently as the population drifted a little from common and traditional names. 
+
+```{python}
+# Q3
+old_names = df.filter(
+  (pl.col("name").is_in(["Mary", "Martha", "Peter", "Paul"])))
+(ggplot(old_names, aes(x="year", y="Total", color = "name")) 
++ geom_line()
++ labs(title = "Usage of the Names 'Mary', 'Martha', 'Peter', and 'Paul' Over Time", x="Year", y = "Total")
+
++ scale_x_continuous(limits=(1920,2000), format="{d}")
+)
+
+```
+<!-- Make sure at least one of your charts includes reference marks!! -->
