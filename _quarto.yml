@@ -49,22 +49,22 @@ website:
           file: cleansing.qmd
         - text: "---"
         - text: "Project 1"
-          file: Cleansing_Projects/project1.qmd
+          file: Cleansing/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Cleansing_Projects/project2.qmd
+          file: Cleansing/project2.qmd
         - text: "---"
         - text: "Project 3"
-          file: Cleansing_Projects/project3.qmd
+          file: Cleansing/project3.qmd
         - text: "---"
-        - text: "Unit 2: Flights Task 1"
-          file: Cleansing_Projects/unit2_task1.qmd
+        - text: "Unit 1: Names Task 1"
+          file: Cleansing/unit1_task1.qmd
         - text: "---"
-        - text: "Unit 2: Flights Task 2"
-          file: Cleansing_Projects/unit2_task2.qmd
+        - text: "Unit 1: Names Task 2"
+          file: Cleansing/unit1_task2.qmd
         - text: "---"
-        - text: "Unit 2: Flights Task 3"
-          file: Cleansing_Projects/unit2_task3.qmd
+        - text: "Unit 1: Names Task 3"
+          file: Cleansing/unit1_task3.qmd
         - text: "---"
     - title: "Data Exploration"
       style: "docked"
@@ -74,31 +74,22 @@ website:
           file: exploration.qmd
         - text: "---"
         - text: "Project 1"
-          file: Cleansing_Exploration/project1.qmd
+          file: Exploration/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Cleansing_Exploration/project2.qmd
+          file: Exploration/project2.qmd
         - text: "---"
         - text: "Project 3"
-          file: Cleansing_Exploration/project3.qmd
+          file: Exploration/project3.qmd
         - text: "---"
-        - text: "Unit 1: Names Task 1"
-          file: Cleansing_Exploration/unit1_task1.qmd
+        - text: "Unit 2: Flights Task 1"
+          file: Exploration/unit2_task1.qmd
         - text: "---"
-        - text: "Unit 1: Names Task 2"
-          file: Cleansing_Exploration/unit1_task2.qmd
+        - text: "Unit 2: Flights Task 2"
+          file: Exploration/unit2_task2.qmd
         - text: "---"
-        - text: "Unit 1: Names Task 3"
-          file: Cleansing_Exploration/unit1_task3.qmd
-        - text: "---"
-        - text: "Unit 3: Baseball Task 1"
-          file: Cleansing_Exploration/unit3_task1.qmd
-        - text: "---"
-        - text: "Unit 3: Baseball Task 2"
-          file: Cleansing_Exploration/unit3_task2.qmd
-        - text: "---"
-        - text: "Unit 3: Baseball Task 3"
-          file: Cleansing_Exploration/unit3_task3.qmd
+        - text: "Unit 2: Flights Task 3"
+          file: Exploration/unit2_task3.qmd
         - text: "---"
     - title: "Story Telling"
       style: "docked"
@@ -116,8 +107,14 @@ website:
         - text: "Project 3"
           file: Story_Telling/project3.qmd
         - text: "---"
-        - text: "Unit 5: Star Wars Final Report"
-          file: Story_Telling/unit5_final_report.qmd
+        - text: "Unit 3: Baseball Task 1"
+          file: Story_Telling/unit3_task1.qmd
+        - text: "---"
+        - text: "Unit 3: Baseball Task 2"
+          file: Story_Telling/unit3_task2.qmd
+        - text: "---"
+        - text: "Unit 3: Baseball Task 3"
+          file: Story_Telling/unit3_task3.qmd
         - text: "---"
     - title: "Machine Learning"
       style: "docked"
@@ -153,6 +150,9 @@ website:
         - text: "---"
         - text: "Project 2"
           file: Full_Stack/project2.qmd
+        - text: "---"
+        - text: "Unit 5: Star Wars Final Report"
+          file: Full_Stack/unit5_final_report.qmd
         - text: "---"
     - title: "Competition"
       style: "docked"
