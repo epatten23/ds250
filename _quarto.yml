@@ -6,7 +6,7 @@ project:
     - "!mywork/**"
 
 website:
-  title: "Your_Name - Data Science Portfolio"
+  title: "Ella Patten - Data Science Portfolio"
   favicon: Images/favicon.png
   back-to-top-navigation: true
   repo-url: https://github.com/username/username.github.io
@@ -14,7 +14,7 @@ website:
 
   page-footer: 
     border: true
-    left: "Your_Name 2024©"
+    left: "Ella Patten 2024©"
     right: 
       - icon: linkedin
         href: Your_LinkedIn_URL
