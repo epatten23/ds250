@@ -1,17 +1,901 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
+    "objectID": "story_telling.html",
+    "href": "story_telling.html",
     "title": "about me",
     "section": "",
-    "text": "MarkDown Basics"
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Story Telling"
+    ]
   },
   {
-    "objectID": "index.html#title-2-header",
-    "href": "index.html#title-2-header",
+    "objectID": "story_telling.html#title-2-header",
+    "href": "story_telling.html#title-2-header",
     "title": "about me",
     "section": "",
-    "text": "MarkDown Basics"
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Story Telling"
+    ]
+  },
+  {
+    "objectID": "ml.html",
+    "href": "ml.html",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Machine Learning"
+    ]
+  },
+  {
+    "objectID": "ml.html#title-2-header",
+    "href": "ml.html#title-2-header",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Machine Learning"
+    ]
+  },
+  {
+    "objectID": "full_stack.html",
+    "href": "full_stack.html",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Full Stack"
+    ]
+  },
+  {
+    "objectID": "full_stack.html#title-2-header",
+    "href": "full_stack.html#title-2-header",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Full Stack"
+    ]
+  },
+  {
+    "objectID": "competition.html",
+    "href": "competition.html",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Competitions",
+      "Competition"
+    ]
+  },
+  {
+    "objectID": "competition.html#title-2-header",
+    "href": "competition.html#title-2-header",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Competitions",
+      "Competition"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task3.html",
+    "href": "Story_Telling/unit3_task3.html",
+    "title": "Client Report - Joins",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nsqlite_file = 'lahmansbaseballdb.sqlite'\n# this file must be in the same location as your .qmd or .py file\ncon = sqlite3.connect(sqlite_file)",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 3"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task3.html#question-1",
+    "href": "Story_Telling/unit3_task3.html#question-1",
+    "title": "Client Report - Joins",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nWrite an SQL query that pulls in the the salaries table and the collegeplaying table (and any other tables you might need) and store them in polars dataframes. In Python Polars, combine the dataframes to create a list of baseball players who attended BYU-Idaho. The new table should contain five columns: playerID, schoolID, salary, yearID and teamID associated with each salary.\nFor this question, I first read in the two tables and then joined them and filtered through them, giving me a list of all baseball players who attended BYU Idaho. I then filtered out the columns I wanted to view, giving me the final results for all players who attened BYUI in an easy to read table.\n\n\nShow the code\n# Include and execute your code here\nq = \"\"\"\n    SELECT * FROM salaries\n\"\"\"\nsalaries = pl.read_database(q, con)\n\nq = \"\"\"\n    SELECT * FROM collegeplaying\n\"\"\"\ncollegeplaying = pl.read_database(q, con)\n\n# Keep the most recent salary per player (by yearID) to avoid multiple rows per player\nsalaries_latest = salaries.sort(\"yearID\", descending=True).unique(subset=[\"playerID\"])\n\n# Keep the most recent college record per player as well\ncollegeplaying_recent = collegeplaying.sort(\"yearID\", descending=True).unique(subset=[\"playerID\"])\n\n# Join on playerID and filter for BYU-Idaho; ensure final rows are unique per playerID\ntogether = salaries_latest.join(collegeplaying_recent, on=\"playerID\", how=\"inner\")\nresult = (\n    together\n    .filter(pl.col(\"schoolID\") == \"idbyuid\")\n    .select([\"playerID\", \"schoolID\", \"salary\", \"yearID\", \"teamID\"])\n    .unique(subset=[\"playerID\"])\n)\nprint(result)\n\n\nshape: (2, 5)\n┌───────────┬──────────┬──────────┬────────┬────────┐\n│ playerID  ┆ schoolID ┆ salary   ┆ yearID ┆ teamID │\n│ ---       ┆ ---      ┆ ---      ┆ ---    ┆ ---    │\n│ str       ┆ str      ┆ f64      ┆ i64    ┆ str    │\n╞═══════════╪══════════╪══════════╪════════╪════════╡\n│ lindsma01 ┆ idbyuid  ┆ 4e6      ┆ 2014   ┆ CHA    │\n│ stephga01 ┆ idbyuid  ┆ 800000.0 ┆ 2003   ┆ SLN    │\n└───────────┴──────────┴──────────┴────────┴────────┘\n\n\n\n\nShow the code\n# con = sqlite3.connect(sqlite_file)\n\n#q = '''\n#SELECT * FROM batting\n#'''\n#result = pl.read_database(q, con)\n#print(result)",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 3"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task3.html#question-2",
+    "href": "Story_Telling/unit3_task3.html#question-2",
+    "title": "Client Report - Joins",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nPick any two baseball teams and compare them using a metric of your choice (average salary, home runs, number of wins, etc). Be creative! Write an SQL query to read in the table(s) you need, then use polars to manipulate the data. Finally, make a graph using Lets-Plot to visualize the comparison. What do you learn?\nI decided to see what the average attendance of a baseball game was for two teams, the New York Yankees and the Houton Astros. I thought that the teamsfranchises table would be helpful to call the teams their franchise names in the graph but I ended up not using it and just manipulaiting the graph details themselves. We can learn here that the astros typically have more fans attending their games.\n\n\nShow the code\n# Include and execute your code here\nq = \"\"\"\n SELECT teamkey, games, attendance, yearkey \n FROM homegames\n WHERE yearkey &gt; 1965\n\"\"\"\nattendance = pl.read_database(q, con)\nq = \"\"\"\nSELECT franchNAME, franchID \nFROM teamsfranchises\n\"\"\"\nfranch = pl.read_database(q, con)\nresult = attendance.join(franch, left_on=\"teamkey\", right_on=\"franchID\", how=\"left\")\nresult = result.with_columns(one_game=(pl.col('attendance') / pl.col('games')).round(0)).filter(pl.col(\"teamkey\").is_in([\"HOU\", \"NYA\"]))\n\n(ggplot(result, aes(x=\"yearkey\", y=\"one_game\", color=\"teamkey\"))\n    + geom_line(size=1)\n    + scale_color_manual(values={\"NYA\": \"navy\", \"HOU\": \"orange\"})\n    + labs(\n        title=\"Average Game Attendance Since 1965\",\n        x=\"Year\",\n        y=\"Avg Attendance per Game\",\n        color=\"Team\"\n    )\n    + scale_x_continuous(format=\"{d}\")\n)",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 3"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task1.html",
+    "href": "Story_Telling/unit3_task1.html",
+    "title": "Client Report - Baseball Database",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nsqlite_file = 'lahmansbaseballdb.sqlite'\n# this file must be in the same location as your .qmd or .py file\ncon = sqlite3.connect(sqlite_file)\nShow the code\n# Include and execute your code here\n\n# The code below uses some basic SQL code to read in the entire 'batting' table in the database and store it in a polars dataframe called 'results'. You must write polars code to manipulate the results dataframe to address the task.\n\nq = \"\"\"\n    SELECT *\n    FROM batting\n    \"\"\"\nresults = pl.read_database(q, con, infer_schema_length=None) \n# What does infer_schema_length = None do?\nresults\n\n\n\nshape: (107_429, 25)\n\n\n\nID\nplayerID\nyearID\nstint\nteamID\nteam_ID\nlgID\nG\nG_batting\nAB\nR\nH\n2B\n3B\nHR\nRBI\nSB\nCS\nBB\nSO\nIBB\nHBP\nSH\nSF\nGIDP\n\n\ni64\nstr\ni64\ni64\nstr\ni64\nstr\ni64\nnull\ni64\ni64\ni64\ni64\ni64\ni64\ni64\ni64\ni64\ni64\ni64\ni64\ni64\ni64\ni64\ni64\n\n\n\n\n1\n\"abercda01\"\n1871\n1\n\"TRO\"\n8\n\"NA\"\n1\nnull\n4\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\nnull\nnull\nnull\nnull\n0\n\n\n2\n\"addybo01\"\n1871\n1\n\"RC1\"\n7\n\"NA\"\n25\nnull\n118\n30\n32\n6\n0\n0\n13\n8\n1\n4\n0\nnull\nnull\nnull\nnull\n0\n\n\n3\n\"allisar01\"\n1871\n1\n\"CL1\"\n3\n\"NA\"\n29\nnull\n137\n28\n40\n4\n5\n0\n19\n3\n1\n2\n5\nnull\nnull\nnull\nnull\n1\n\n\n4\n\"allisdo01\"\n1871\n1\n\"WS3\"\n9\n\"NA\"\n27\nnull\n133\n28\n44\n10\n2\n2\n27\n1\n1\n0\n2\nnull\nnull\nnull\nnull\n0\n\n\n5\n\"ansonca01\"\n1871\n1\n\"RC1\"\n7\n\"NA\"\n25\nnull\n120\n29\n39\n11\n3\n0\n16\n6\n2\n2\n1\nnull\nnull\nnull\nnull\n0\n\n\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n…\n\n\n107425\n\"zimmejo02\"\n2019\n1\n\"DET\"\n2905\n\"AL\"\n23\nnull\n2\n0\n0\n0\n0\n0\n0\n0\n0\n0\n2\n0\n0\n0\n0\n0\n\n\n107426\n\"zimmeky01\"\n2019\n1\n\"KCA\"\n2907\n\"AL\"\n15\nnull\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n\n\n107427\n\"zimmery01\"\n2019\n1\n\"WAS\"\n2925\n\"NL\"\n52\nnull\n171\n20\n44\n9\n0\n6\n27\n0\n0\n17\n39\n0\n0\n0\n2\n4\n\n\n107428\n\"zobribe01\"\n2019\n1\n\"CHN\"\n2901\n\"NL\"\n47\nnull\n150\n24\n39\n5\n0\n1\n17\n0\n0\n23\n24\n0\n1\n0\n2\n6\n\n\n107429\n\"zuninmi01\"\n2019\n1\n\"TBA\"\n2922\n\"AL\"\n90\nnull\n266\n30\n44\n10\n1\n9\n32\n0\n0\n20\n98\n0\n3\n0\n0\n4",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 1"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task1.html#question-1",
+    "href": "Story_Telling/unit3_task1.html#question-1",
+    "title": "Client Report - Baseball Database",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nUse the provided code above to read in the batting table. Then, with Python Polars manipulate the ‘results’ dataframe to calculate the number of at bats and the batting average for each year a player played. Filter the data frame to only include players with at least 10 at bats that year. Sort the dataframe from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.\nNote: A batting average is meant to measure how often a player puts the ball in play and gets to base safely. For this task, use a simplified version of batting average defined as the sum of hits (labeled ‘H’) divided by number of at bats (labeled ‘AB’).\nHere we can create a new column, using the already established columns for hits and at bats to calculate and save the batting average. Then we filter out the rows in which players had less than 10 at bats and sort the columns by batting average and then their player id. Here we find the highest batting average happened in 1929 with a .51 batting average.\n\n\nShow the code\n# Include and execute your code here\nresults_per_year = results.with_columns(batting_average = pl.col(\"H\") / pl.col(\"AB\")).filter(pl.col('AB') &gt; 10).sort([\"batting_average\", 'playerID'], descending = [True, False])\n\nprint(results_per_year.select(\"playerID\", 'yearID', \"AB\", 'H', \"batting_average\").head(5))\n\n\nshape: (5, 5)\n┌───────────┬────────┬─────┬─────┬─────────────────┐\n│ playerID  ┆ yearID ┆ AB  ┆ H   ┆ batting_average │\n│ ---       ┆ ---    ┆ --- ┆ --- ┆ ---             │\n│ str       ┆ i64    ┆ i64 ┆ i64 ┆ f64             │\n╞═══════════╪════════╪═════╪═════╪═════════════════╡\n│ nymanny01 ┆ 1974   ┆ 14  ┆ 9   ┆ 0.642857        │\n│ carsoma01 ┆ 2013   ┆ 11  ┆ 7   ┆ 0.636364        │\n│ silvech01 ┆ 1948   ┆ 14  ┆ 8   ┆ 0.571429        │\n│ puccige01 ┆ 1930   ┆ 16  ┆ 9   ┆ 0.5625          │\n│ applepe01 ┆ 1927   ┆ 11  ┆ 6   ┆ 0.545455        │\n└───────────┴────────┴─────┴─────┴─────────────────┘",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 1"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task1.html#question-2",
+    "href": "Story_Telling/unit3_task1.html#question-2",
+    "title": "Client Report - Baseball Database",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nUse the provided code above to read in the batting table. Then, with Python Polars manipulate the ‘results’ dataframe to calculate the batting average for each player over their entire career (all years combined). Only include players with at least 100 at bats over their entire career. Sort the dataframe from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.\nNote: A batting average is meant to measure how often a player puts the ball in play and gets to base safely. For this task, use a simplified version of batting average defined as the sum of hits (labeled ‘H’) divided by number of at bats (labeled ‘AB’).\nFor this table I used practically the same methodology. The only thing that changed is I made sure to sum the at bats and hits for each player over all the years and then the table could be filtered by at bats (more than 100) and sorted.\n\n\nShow the code\n# Include and execute your code here\nresults_total = results.group_by('playerID').agg(pl.col('H').sum().alias('total_hits'), (pl.col('AB').sum().alias(\"at_bat\"))).with_columns(batting_average = pl.col(\"total_hits\") / pl.col(\"at_bat\")).filter(pl.col('at_bat') &gt;= 100).sort([\"batting_average\", 'playerID'], descending = [True, False])\n\nprint(results_total.select(\"playerID\", \"at_bat\", 'total_hits', \"batting_average\").head(5))\n\n\nshape: (5, 4)\n┌───────────┬────────┬────────────┬─────────────────┐\n│ playerID  ┆ at_bat ┆ total_hits ┆ batting_average │\n│ ---       ┆ ---    ┆ ---        ┆ ---             │\n│ str       ┆ i64    ┆ i64        ┆ f64             │\n╞═══════════╪════════╪════════════╪═════════════════╡\n│ cobbty01  ┆ 11436  ┆ 4189       ┆ 0.366299        │\n│ barnero01 ┆ 2391   ┆ 860        ┆ 0.359682        │\n│ hornsro01 ┆ 8173   ┆ 2930       ┆ 0.358497        │\n│ jacksjo01 ┆ 4981   ┆ 1772       ┆ 0.355752        │\n│ meyerle01 ┆ 1443   ┆ 513        ┆ 0.355509        │\n└───────────┴────────┴────────────┴─────────────────┘",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 1"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/project2.html",
+    "href": "Story_Telling/project2.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Story Telling",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/unit4_task3.html",
+    "href": "Machine_Learning/unit4_task3.html",
+    "title": "Client Report - Show me!",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport numpy as np\nfrom lets_plot import *\nfrom sklearn.model_selection import train_test_split\nfrom sklearn import metrics\n# add the additional libraries you need to import for ML here\nimport pandas as pd\nfrom sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.inspection import permutation_importance\nfrom sklearn.metrics import classification_report\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using polars and the URL\ndata_path = 'dwellings_ml.txt'\ndwellings = pl.read_csv(data_path)\n\n# Feature names list\nfeature_names = [\n  'livearea','finbsmnt','basement','stories','nocars','numbdrm','numbaths','condition_AVG',\n  'quality_A','quality_B','quality_C','quality_D','quality_X',\n  'gartype_Att','gartype_Det','gartype_None','gartype_CP'\n]\n\n# Prepare features and target (same as Task 1)\nfeatures = dwellings.select(feature_names).to_numpy()\ntarget = dwellings.select('before1980').to_numpy().ravel()\n\nx_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.3, stratify=target)",
+    "crumbs": [
+      "Machine Learning",
+      "Unit 4: Predictions Task 3"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/unit4_task3.html#question-1",
+    "href": "Machine_Learning/unit4_task3.html#question-1",
+    "title": "Client Report - Show me!",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\n\nRepeat the classification exercise using 2 different algorithms/models. Explain the differences between the 3 models (your original one, and the 2 new ones for this task).\n\n1 Random Forest Classifier (original): Builds different decision trees and combines their answers. This model handles messy data well and doesn’t tend to overfit.\n2 Logistic Regression: A simpler model that draws a straight line to separate the two groups. It’s easier to understand but can struggle when data has complex patterns.\n3 Gradient Boosting Classifier: Builds trees one at a time and each new tree fixes the mistakes of the previous one. It’s usually very accurate but takes longer to train.\n\n\nShow the code\n# Include and execute your code here\n# Model 1: Old Random Forest Classifier\nrfmodel = RandomForestClassifier(random_state=42)\nrfmodel.fit(x_train, y_train)\nrf_pred = rfmodel.predict(x_test)\nrf_acc = metrics.accuracy_score(y_test, rf_pred)\n\n# Model 2: Logistic Regression\nlrmodel = LogisticRegression(max_iter=1000, random_state=42)\nlrmodel.fit(x_train, y_train)\nlr_pred = lrmodel.predict(x_test)\nlr_acc = metrics.accuracy_score(y_test, lr_pred)\n\n# Model 3: Gradient Boosting Classifier\ngb_model = GradientBoostingClassifier(random_state=42, n_estimators=100)\ngb_model.fit(x_train, y_train)\ngb_pred = gb_model.predict(x_test)\ngb_acc = metrics.accuracy_score(y_test, gb_pred)\n\nprint(\"Accuracy of the three different models:\")\nprint(f\"Random Forest:\", rf_acc)\nprint(f\"Logistic Regression\", lr_acc)\nprint(f\"Gradient Boosting:\", gb_acc)\n\n\nAccuracy of the three different models:\nRandom Forest: 0.9234797788769276\nLogistic Regression 0.8540878673261565\nGradient Boosting: 0.8919115507710212",
+    "crumbs": [
+      "Machine Learning",
+      "Unit 4: Predictions Task 3"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/unit4_task3.html#question-2",
+    "href": "Machine_Learning/unit4_task3.html#question-2",
+    "title": "Client Report - Show me!",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\n\nFor each model (your original one, and the 2 new ones for this task), display the classification report and the permutation importances for the most important features. Discuss which model you would recommend to the Client and why.\n\nAll three models performed well, but the Random Forest and Gradient Boosting models were stronger than Logistic Regression. Across all three models, features like living area and number of stories consistently showed up as the most important. Ultimately, I would recommend the Gradient Boosting Classifier to the client since it had the best overall scores in the classification report, meaning it made the fewest mistakes when predicting whether a home was built before 1980.\n\n\nShow the code\n# Include and execute your code here\nprint(\"Random forest (original) classification report\")\nprint(classification_report(y_test, rf_pred, target_names=['1980 or After', 'Before 1980']))\nrf_r = permutation_importance(rfmodel, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\nrf_importances = pd.Series(rf_r.importances_mean, index=feature_names)\nprint(\"Top 5 Importances (Random Forest):\")\nfor f, i in rf_importances.nlargest(5).items():\n    print(f\"  {f}: {i:.4f}\")\nprint(\"/n/n\")\nprint(\"Logistic Regression classification report\")\nprint(classification_report(y_test, lr_pred, target_names=['1980 or After', 'Before 1980']))\nlr_r = permutation_importance(lrmodel, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\nlr_importances = pd.Series(lr_r.importances_mean, index=feature_names)\nprint(\"Top 5 Importances (Logistic Regression):\")\nfor f, i in lr_importances.nlargest(5).items():\n    print(f\"  {f}: {i:.4f}\")\nprint(\"/n/n\")\nprint(\"Gradient boosting classification report\")\nprint(classification_report(y_test, gb_pred, target_names=['1980 or After', 'Before 1980']))\ngb_r = permutation_importance(gb_model, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\ngb_importances = pd.Series(gb_r.importances_mean, index=feature_names)\nprint(\"Top 5 Importances (Gradient Boosting):\")\nfor f, i in gb_importances.nlargest(5).items():\n    print(f\"  {f}: {i:.4f}\")\n\n\nRandom forest (original) classification report\n               precision    recall  f1-score   support\n\n1980 or After       0.90      0.90      0.90      2578\n  Before 1980       0.94      0.94      0.94      4296\n\n     accuracy                           0.92      6874\n    macro avg       0.92      0.92      0.92      6874\n weighted avg       0.92      0.92      0.92      6874\n\nTop 5 Importances (Random Forest):\n  stories: 0.1342\n  numbaths: 0.0836\n  livearea: 0.0690\n  basement: 0.0661\n  numbdrm: 0.0420\n/n/n\nLogistic Regression classification report\n               precision    recall  f1-score   support\n\n1980 or After       0.81      0.79      0.80      2578\n  Before 1980       0.88      0.89      0.88      4296\n\n     accuracy                           0.85      6874\n    macro avg       0.85      0.84      0.84      6874\n weighted avg       0.85      0.85      0.85      6874\n\nTop 5 Importances (Logistic Regression):\n  numbaths: 0.1390\n  stories: 0.0670\n  quality_C: 0.0646\n  finbsmnt: 0.0446\n  numbdrm: 0.0382\n/n/n\nGradient boosting classification report\n               precision    recall  f1-score   support\n\n1980 or After       0.87      0.83      0.85      2578\n  Before 1980       0.90      0.93      0.91      4296\n\n     accuracy                           0.89      6874\n    macro avg       0.89      0.88      0.88      6874\n weighted avg       0.89      0.89      0.89      6874\n\nTop 5 Importances (Gradient Boosting):\n  stories: 0.0938\n  numbaths: 0.0531\n  quality_C: 0.0423\n  gartype_Att: 0.0330\n  basement: 0.0300",
+    "crumbs": [
+      "Machine Learning",
+      "Unit 4: Predictions Task 3"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/unit4_task1.html",
+    "href": "Machine_Learning/unit4_task1.html",
+    "title": "Client Report - Can You Predict That?",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.model_selection import train_test_split\nfrom sklearn import metrics\nfrom sklearn.ensemble import RandomForestClassifier\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using polars and the local dataset file\ndata_path = 'dwellings_ml.txt'\ndwellings = pl.read_csv(data_path)",
+    "crumbs": [
+      "Machine Learning",
+      "Unit 4: Predictions Task 1"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/unit4_task1.html#question",
+    "href": "Machine_Learning/unit4_task1.html#question",
+    "title": "Client Report - Can You Predict That?",
+    "section": "QUESTION",
+    "text": "QUESTION\n\nTake time to get to know your data. Based on some initial exploration, identify 3 variables in the dataset you think will have strong predictive ability for determining if a house was built before 1980. Explain/justify the reasoning behind your guesses (for example with plots).\n\nThe three variables I think would be helpful is the living area, finished basement, and condition of the house. These don’t have a huge correlation, but I think all together they could be helpful.\n\n\nShow the code\n# Optional: code you used to get to know your data\n\nprint('Dataset shape:', dwellings.shape)\nfor c in dwellings.columns:\n    print(c)\nprint(dwellings.select(pl.col(\"yrbuilt\", \"stories\", \"before1980\")))\n\nplot_data = dwellings.select(['yrbuilt', 'livearea', 'finbsmnt', 'condition_AVG']).to_pandas()\n\np1 = (\n    ggplot(plot_data, aes(x='yrbuilt', y='livearea'))\n    + geom_point(alpha=0.2, size=2)\n    + labs( title = 'Year Built vs Living Area', x = 'Year Built', y = 'Living Area')\n    + scale_x_continuous(format='{d}')\n)\n\np2 = (\n    ggplot(plot_data, aes(x='yrbuilt', y='finbsmnt'))\n    + geom_point(alpha=0.2, size=2)\n    + labs( title = 'Year Built vs Finished Basement', x = 'Year Built', y = 'Finished Basement')\n    + scale_x_continuous(format='{d}')\n)\n\np3 = (\n    ggplot(plot_data, aes(x='yrbuilt'))\n    + geom_bar()\n    + labs( title = 'Count of Houses by Year Built', x = 'Year Built', y = 'Count')\n    + scale_x_continuous(format='{d}')\n)\n\nplot_grid = gggrid([p1, p2, p3], ncol=1)\nplot_grid\n\n\nDataset shape: (22913, 51)\nparcel\nabstrprd\nlivearea\nfinbsmnt\nbasement\nyrbuilt\ntotunits\nstories\nnocars\nnumbdrm\nnumbaths\nsprice\ndeduct\nnetprice\ntasp\nsmonth\nsyear\ncondition_AVG\ncondition_Excel\ncondition_Fair\ncondition_Good\ncondition_VGood\nquality_A\nquality_B\nquality_C\nquality_D\nquality_X\ngartype_Att\ngartype_Att/Det\ngartype_CP\ngartype_Det\ngartype_None\ngartype_att/CP\ngartype_det/CP\narcstyle_BI-LEVEL\narcstyle_CONVERSIONS\narcstyle_END UNIT\narcstyle_MIDDLE UNIT\narcstyle_ONE AND HALF-STORY\narcstyle_ONE-STORY\narcstyle_SPLIT LEVEL\narcstyle_THREE-STORY\narcstyle_TRI-LEVEL\narcstyle_TRI-LEVEL WITH BASEMENT\narcstyle_TWO AND HALF-STORY\narcstyle_TWO-STORY\nqualified_Q\nqualified_U\nstatus_I\nstatus_V\nbefore1980\nshape: (22_913, 3)\n┌─────────┬─────────┬────────────┐\n│ yrbuilt ┆ stories ┆ before1980 │\n│ ---     ┆ ---     ┆ ---        │\n│ i64     ┆ i64     ┆ i64        │\n╞═════════╪═════════╪════════════╡\n│ 2004    ┆ 2       ┆ 0          │\n│ 2005    ┆ 1       ┆ 0          │\n│ 2005    ┆ 2       ┆ 0          │\n│ 2005    ┆ 1       ┆ 0          │\n│ 2005    ┆ 1       ┆ 0          │\n│ …       ┆ …       ┆ …          │\n│ 1998    ┆ 1       ┆ 0          │\n│ 1998    ┆ 1       ┆ 0          │\n│ 1998    ┆ 1       ┆ 0          │\n│ 1998    ┆ 1       ┆ 0          │\n│ 1998    ┆ 1       ┆ 0          │\n└─────────┴─────────┴────────────┘\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\nBuild a classification model labeling houses as being built “before 1980” or “during or after 1980”. Your goal is to reach or exceed 90% accuracy. Report your final model choice and any other model parameters you may have tweaked (train-test split ratio, tuning parameters, etc).\n\nHere we’re able to use RandomForestClassifier to predict whether a house was built before 1980. I used few features at first and then increased the number of features to see if it would increase the accuracy – it did, by about 3%. I tweaked the train-test ratio to 70-30 and that seemed to work well, but I didn’t do any tuning of the model parameters. I think that could be a next step to try to increase the accuracy even more.\n\n\nShow the code\n# Include and execute your code here\n# Don't forget, you need another import statement to import the desired ML model from sklearn\nfeatures = dwellings.select(['livearea','finbsmnt','basement','stories','nocars','numbdrm','numbaths','condition_AVG',\n    'quality_A','quality_B','quality_C','quality_D','quality_X',\n    'gartype_Att','gartype_Det','gartype_None','gartype_CP']).to_numpy()\ntarget = dwellings.select('before1980').to_numpy().ravel()\n\nx_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.3, stratify=target)\n\nmodel = RandomForestClassifier()\nmodel.fit(x_train, y_train)\n\ny_pred = model.predict(x_test)\n\nacc = metrics.accuracy_score(y_test, y_pred)\nprint('accuracy:', acc)\n\n\naccuracy: 0.917951702065755",
+    "crumbs": [
+      "Machine Learning",
+      "Unit 4: Predictions Task 1"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/project2.html",
+    "href": "Machine_Learning/project2.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Machine Learning",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_task2.html",
+    "href": "Full_Stack/unit5_task2.html",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "",
+    "text": "Show the code\nimport polars as pl \nimport numpy as np\nfrom lets_plot import *\nimport polars.selectors as cs\n# add the additional libraries you need to import for ML here\n\nLetsPlot.setup_html(isolated_frame=True)\n\ndata_url = \"https://byuidatascience.github.io/DS250-Course-Polars/Data/StarWars_with_emails.csv\"\nShow the code\n# Read in and tidy up the first row\na = pl.Series(pl.read_csv(data_url, skip_rows = 10, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n# Note the non-aschii character in the column \"Do you consider yourself to be a fan of the Expanded Universe\". (column AF if you open it in Excel). \n\n# BTW: Detecting what it is and where can be difficult\n\n# Lossy means that invalid utf8 values are replaced with � characters. When using other encodings than utf8 or utf8-lossy, the input is first decoded in memory with python. Defaults to utf8...ignore_errors = True does not replace the non-utf8 character with a blank space like you would hope\n\na[2] = \"seen_any\" #simply overwrite the value at index 2\n\n# Rather than changing each column header manually,\n# here we use regex to apply changes more efficiently\na = (\n  a.str.replace(r\".+seen.+\", \"seen_\")\n   .str.replace(r\".+rank.+\", \"rank_\")\n   .str.replace(r\"(.+favorably.+)\", \"fav_\")\n   .fill_null(strategy = \"forward\")\n\n   .str.replace(\"\\uFFFD+\", \"\") #this gets rid of the question marks in a diamond characters \n   .str.strip_chars()\n   .str.to_lowercase()\n   .str.replace_all(\" \", \"_\")\n   .str.replace(r\"location(.+)\", \"location\")\n\n)\na[3] = \"star_wars_fan\"\na[30] = \"who_shot_first\"\na[31] = \"know_expanded_universe\"\na[32] = \"expanded_universe_fan\"\na[33] = \"star_trek_fan\"\nShow the code\nb = pl.Series(pl.read_csv(data_url, skip_rows = 11, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n\nb = (\n  b.str.replace(r\"Star Wars: (Episode \\w+) .+\", \"${1}\")\n   .str.replace(\"Response\", \"\")\n   .str.replace_all(\" \", \"_\")\n   .fill_null(\"\")\n   .str.strip_chars()\n)\nShow the code\n#Now combine the two series, each of which contains part of the desired column header\nnew_names = (a + b).to_list()\n\n# Read in the data, skipping over the column header rows\n# and use 'new_names' as the column headers\ndf = pl.read_csv(data_url, skip_rows=12, has_header=False, new_columns = new_names )",
+    "crumbs": [
+      "Full Stack",
+      "Unit 5: Star Wars Task 2"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_task2.html#executive-summary",
+    "href": "Full_Stack/unit5_task2.html#executive-summary",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Executive Summary",
+    "text": "Executive Summary\n\nThis is a high level overview of the analysis, including the problem statement, the data used, and the main findings. It should be concise and to the point, summarizing the key insights/recommendations without going into too much detail. These are usually bullet points, no graphs. PLEASE EXPLICITLY STATE IN THIS SECTION WHETHER YOU DID THE STRETCH OR NOT!",
+    "crumbs": [
+      "Full Stack",
+      "Unit 5: Star Wars Task 2"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_task2.html#methods",
+    "href": "Full_Stack/unit5_task2.html#methods",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Methods",
+    "text": "Methods\nthis is a high level overview of the methods used in the analysis. This should include an explanation of data preparation steps, especially how you dealt with each categorical variable and why. Showing the resulting or original distribution of variables may be helpful. Describe how you handled missing values and outliers. How did/might your decisions impact results? Explain any feature engineering steps you took. This is also where you will put the graphs you recreated to show you validated the dataset and that it matches the article.\nRegex is used to parse the email column and extract each respondent’s first name, last name, and email domain into separate columns. Each pattern uses markers in the email — such as the start of a string and the @ symbol — to isolate the relevant text.\n\n\nShow the code\n# Extract first name, last name, and email domain from the email column\ndf = df.with_columns([\n    pl.col(\"email\").str.strip_chars().str.extract(r\"^([a-zA-Z]+)\", 1).alias(\"first_name\"),\n    pl.col(\"email\").str.strip_chars().str.extract(r\"([a-zA-Z]+)@\", 1).alias(\"last_name\"),\n    pl.col(\"email\").str.strip_chars().str.extract(r\"@([a-zA-Z0-9]+)\", 1).alias(\"email_domain\"),\n])\ndf.select([\"email\", \"first_name\", \"last_name\", \"email_domain\"]).head(5)\n\n\n\nshape: (5, 4)\n\n\n\nemail\nfirst_name\nlast_name\nemail_domain\n\n\nstr\nstr\nstr\nstr\n\n\n\n\n\"atticus.kensington@GMAIL\"\n\"atticus\"\n\"kensington\"\n\"GMAIL\"\n\n\n\"barrett_amelia@YAHOO \"\n\"barrett\"\n\"amelia\"\n\"YAHOO\"\n\n\n\"carrington54543jack@myorg\"\n\"carrington\"\n\"jack\"\n\"myorg\"\n\n\n\"emma.miller@gmaiL \"\n\"emma\"\n\"miller\"\n\"gmaiL\"\n\n\n\"brielle.ironwood@GMAIL \"\n\"brielle\"\n\"ironwood\"\n\"GMAIL\"\n\n\n\n\n\n\nHere we count the email domains, normalizing all domains to lowercase before grouping, since the raw data contains inconsistent capitalization. This ensures that variations of the same domain are counted together rather than treated as separate entries.\n\n\nShow the code\n# Unique email domain count\ndomain_count = (df.with_columns(pl.col(\"email_domain\").str.to_lowercase()).group_by(\"email_domain\").len().sort(\"len\", descending=True))\ndomain_count\n\n\n\nshape: (3, 2)\n\n\n\nemail_domain\nlen\n\n\nstr\nu32\n\n\n\n\n\"gmail\"\n707\n\n\n\"myorg\"\n286\n\n\n\"yahoo\"\n193\n\n\n\n\n\n\nThe dataset is filtered to respondents who have seen at least one Star Wars film. Rather than relying on the self-reported seen_any column, we check the six individual film columns directly — if any are non-null, the respondent has seen at least one film.\n\n\nShow the code\n# Respondents who have seen at least one Star Wars film\nseen_cols = [c for c in df.columns if c.startswith(\"seen_\") and c != \"seen_any\"]\ndf_seen = df.filter(\n    pl.any_horizontal([pl.col(c).is_not_null() for c in seen_cols])\n)\n\nprint(df_seen.head(5))\n\n\nshape: (5, 42)\n┌───────────┬───────────┬──────────┬───────────┬───┬───────────┬───────────┬───────────┬───────────┐\n│ responden ┆ email     ┆ seen_any ┆ star_wars ┆ … ┆ location  ┆ first_nam ┆ last_name ┆ email_dom │\n│ tid       ┆ ---       ┆ ---      ┆ _fan      ┆   ┆ ---       ┆ e         ┆ ---       ┆ ain       │\n│ ---       ┆ str       ┆ str      ┆ ---       ┆   ┆ str       ┆ ---       ┆ str       ┆ ---       │\n│ i64       ┆           ┆          ┆ str       ┆   ┆           ┆ str       ┆           ┆ str       │\n╞═══════════╪═══════════╪══════════╪═══════════╪═══╪═══════════╪═══════════╪═══════════╪═══════════╡\n│ 329287999 ┆ atticus.k ┆ Yes      ┆ Yes       ┆ … ┆ South     ┆ atticus   ┆ kensingto ┆ GMAIL     │\n│ 8         ┆ ensington ┆          ┆           ┆   ┆ Atlantic  ┆           ┆ n         ┆           │\n│           ┆ @GMAIL    ┆          ┆           ┆   ┆           ┆           ┆           ┆           │\n│ 329276527 ┆ carringto ┆ Yes      ┆ No        ┆ … ┆ West      ┆ carringto ┆ jack      ┆ myorg     │\n│ 1         ┆ n54543jac ┆          ┆           ┆   ┆ North     ┆ n         ┆           ┆           │\n│           ┆ k@myorg   ┆          ┆           ┆   ┆ Central   ┆           ┆           ┆           │\n│ 329276311 ┆ emma.mill ┆ Yes      ┆ Yes       ┆ … ┆ West      ┆ emma      ┆ miller    ┆ gmaiL     │\n│ 6         ┆ er@gmaiL  ┆          ┆           ┆   ┆ North     ┆           ┆           ┆           │\n│           ┆           ┆          ┆           ┆   ┆ Central   ┆           ┆           ┆           │\n│ 329273122 ┆ brielle.i ┆ Yes      ┆ Yes       ┆ … ┆ West      ┆ brielle   ┆ ironwood  ┆ GMAIL     │\n│ 0         ┆ ronwood@G ┆          ┆           ┆   ┆ North     ┆           ┆           ┆           │\n│           ┆ MAIL      ┆          ┆           ┆   ┆ Central   ┆           ┆           ┆           │\n│ 329271938 ┆ harper.as ┆ Yes      ┆ Yes       ┆ … ┆ Middle    ┆ harper    ┆ ashford   ┆ GmAIl     │\n│ 0         ┆ hford@GmA ┆          ┆           ┆   ┆ Atlantic  ┆           ┆           ┆           │\n│           ┆ Il        ┆          ┆           ┆   ┆           ┆           ┆           ┆           │\n└───────────┴───────────┴──────────┴───────────┴───┴───────────┴───────────┴───────────┴───────────┘\n\n\nHere we pull apart the answers that are numbers yet currently formatted as strings and turn them into numbers. When it’s a range the data point set is the lowest number in the range. The categories must be numeric for machine learning, so each category is mapped to an integer. This preserves the ordering of each variable and keeps the conversion simple and consistent. Now we can use ‘df_for_ml’ as our machine learning ready data set!\n\n\nShow the code\n# Age\nage_map = {\"18-29\": 18, \"30-44\": 30, \"45-60\": 45, \"&gt; 60\": 60}\n\ndf_for_ml = (\n    df_seen\n    .with_columns(pl.col(\"age\").replace(age_map).cast(pl.Int32).alias(\"age_num\"))\n    .drop(\"age\")\n)\n# Education\neducation_ = {\n    \"Less than high school degree\": 1,\n    \"High school degree\": 2,\n    \"Some college or Associate degree\": 3,\n    \"Bachelor degree\": 4,\n    \"Graduate degree\": 5,\n}\n\ndf_for_ml = (\n    df_for_ml\n    .with_columns(pl.col(\"education\").replace(education_).cast(pl.Int32).alias(\"education_num\"))\n    .drop(\"education\")\n)\n# Income\nincome = {\n    \"$0 - $24,999\": 0,\n    \"$25,000 - $49,999\": 25000,\n    \"$50,000 - $99,999\": 50000,\n    \"$100,000 - $149,999\": 100000,\n    \"$150,000+\": 150000,\n}\n\ndf_for_ml = (\n    df_for_ml\n    .with_columns(pl.col(\"household_income\").replace(income).cast(pl.Int64).alias(\"income_num\"))\n    .drop(\"household_income\")\n)\n# Favorability\nfav = {\n    \"Very favorably\": 5,\n    \"Somewhat favorably\": 4,\n    \"Neither favorably nor unfavorably (neutral)\": 3,\n    \"Somewhat unfavorably\": 2,\n    \"Very unfavorably\": 1,\n    \"Unfamiliar (N/A)\": 0,\n}\n\nfav_columns = [c for c in df.columns if c.startswith(\"fav_\")]\n\ndf_for_ml = (\n    df_for_ml\n    .with_columns([pl.col(c).replace(fav).cast(pl.Int32) for c in fav_columns])\n)\n\n# show head of complete data set \ndf_for_ml.select([\"age_num\", \"education_num\", \"income_num\"] + fav_columns).head(5)\n\n\n\nshape: (5, 17)\n\n\n\nage_num\neducation_num\nincome_num\nfav_Han_Solo\nfav_Luke_Skywalker\nfav_Princess_Leia_Organa\nfav_Anakin_Skywalker\nfav_Obi_Wan_Kenobi\nfav_Emperor_Palpatine\nfav_Darth_Vader\nfav_Lando_Calrissian\nfav_Boba_Fett\nfav_C-3P0\nfav_R2_D2\nfav_Jar_Jar_Binks\nfav_Padme_Amidala\nfav_Yoda\n\n\ni32\ni32\ni64\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\n\n\n\n\n18\n2\nnull\n5\n5\n5\n5\n5\n5\n5\n0\n0\n5\n5\n5\n5\n5\n\n\n18\n2\n0\n4\n4\n4\n4\n4\n0\n0\n0\n0\n0\n0\n0\n0\n0\n\n\n18\n3\n100000\n5\n5\n5\n5\n5\n4\n5\n4\n2\n5\n5\n5\n5\n5\n\n\n18\n3\n100000\n5\n4\n4\n2\n5\n1\n4\n3\n5\n4\n4\n1\n4\n4\n\n\n18\n4\n25000\n5\n5\n5\n5\n5\n3\n5\n3\n4\n4\n4\n4\n3\n5",
+    "crumbs": [
+      "Full Stack",
+      "Unit 5: Star Wars Task 2"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_task2.html#results",
+    "href": "Full_Stack/unit5_task2.html#results",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Results",
+    "text": "Results\nthis is a more in-depth explanation of results. A classification report and feature importance graphs belong here. type your report here, you will likely want multiple code chunks and text intermingled\nHere is the shape of the table for all the respondents who have seen at least one film, adding up to a total of 835.\n\n\nShow the code\n# Shape of table for respondents who have seen at least one Star Wars film\nprint(df_seen.shape)\n\n\n(835, 42)\n\n\n## Conclusion: this is where you will discuss the implication of the results, including any limitations of the analysis, and recommendations for actions/future work. It may feel repetitive to the executive summary, but it should be more detailed and include any additional insights you gained from the analysis. –&gt;\ntype your write-up and analysis here",
+    "crumbs": [
+      "Full Stack",
+      "Unit 5: Star Wars Task 2"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_final_report.html",
+    "href": "Full_Stack/unit5_final_report.html",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "",
+    "text": "Show the code\nimport polars as pl \nimport numpy as np\nfrom lets_plot import *\nimport polars.selectors as cs\nimport pandas as pd\n# imports for ML\nfrom sklearn.model_selection import train_test_split\nfrom sklearn import metrics\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import classification_report\n\nLetsPlot.setup_html(isolated_frame=True)\n\ndata_url = \"https://byuidatascience.github.io/DS250-Course-Polars/Data/StarWars_with_emails.csv\"\nShow the code\n# Read in and tidy up the first row\na = pl.Series(pl.read_csv(data_url, skip_rows = 10, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n# Note the non-aschii character in the column \"Do you consider yourself to be a fan of the Expanded Universe\". (column AF if you open it in Excel). \n\n# BTW: Detecting what it is and where can be difficult\n\n# Lossy means that invalid utf8 values are replaced with � characters. When using other encodings than utf8 or utf8-lossy, the input is first decoded in memory with python. Defaults to utf8...ignore_errors = True does not replace the non-utf8 character with a blank space like you would hope\n\na[2] = \"seen_any\" #simply overwrite the value at index 2\n\n# Rather than changing each column header manually,\n# here we use regex to apply changes more efficiently\na = (\n  a.str.replace(r\".+seen.+\", \"seen_\")\n   .str.replace(r\".+rank.+\", \"rank_\")\n   .str.replace(r\"(.+favorably.+)\", \"fav_\")\n   .fill_null(strategy = \"forward\")\n\n   .str.replace(\"\\uFFFD+\", \"\") #this gets rid of the question marks in a diamond characters \n   .str.strip_chars()\n   .str.to_lowercase()\n   .str.replace_all(\" \", \"_\")\n   .str.replace(r\"location(.+)\", \"location\")\n\n)\na[3] = \"star_wars_fan\"\na[30] = \"who_shot_first\"\na[31] = \"know_expanded_universe\"\na[32] = \"expanded_universe_fan\"\na[33] = \"star_trek_fan\"\nShow the code\nb = pl.Series(pl.read_csv(data_url, skip_rows = 11, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n\nb = (\n  b.str.replace(r\"Star Wars: (Episode \\w+) .+\", \"${1}\")\n   .str.replace(\"Response\", \"\")\n   .str.replace_all(\" \", \"_\")\n   .fill_null(\"\")\n   .str.strip_chars()\n)\nShow the code\n#Now combine the two series, each of which contains part of the desired column header\nnew_names = (a + b).to_list()\n\n# Read in the data, skipping over the column header rows\n# and use 'new_names' as the column headers\ndf = pl.read_csv(data_url, skip_rows=12, has_header=False, new_columns = new_names )"
+  },
+  {
+    "objectID": "Full_Stack/unit5_final_report.html#executive-summary",
+    "href": "Full_Stack/unit5_final_report.html#executive-summary",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Executive Summary",
+    "text": "Executive Summary\n\nThis report uses the FiveThirtyEight Star Wars survey to predict whether a respondent’s household income is above $50,000 using a Random Forest Classifier.\nThe dataset includes 835 respondents who have seen at least one Star Wars film. Survey responses were cleaned and encoded for use in the model.\nThe model achieved approximately 65% accuracy on the test set.\nThe stretch was completed: two charts from the article are recreated and validate the dataset."
+  },
+  {
+    "objectID": "Full_Stack/unit5_final_report.html#methods",
+    "href": "Full_Stack/unit5_final_report.html#methods",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Methods",
+    "text": "Methods\nRegex is used to parse the email column and extract each respondent’s first name, last name, and email domain into separate columns. Each pattern uses markers in the email — such as the start of a string and the @ symbol — to isolate the relevant text.\n\n\nShow the code\n# Extract first name, last name, and email domain from the email column\ndf = df.with_columns([\n    pl.col(\"email\").str.strip_chars().str.extract(r\"^([a-zA-Z]+)\", 1).alias(\"first_name\"),\n    pl.col(\"email\").str.strip_chars().str.extract(r\"([a-zA-Z]+)@\", 1).alias(\"last_name\"),\n    pl.col(\"email\").str.strip_chars().str.extract(r\"@([a-zA-Z0-9]+)\", 1).alias(\"email_domain\"),\n])\ndf.select([\"email\", \"first_name\", \"last_name\", \"email_domain\"]).head(5)\n\n\n\nshape: (5, 4)\n\n\n\nemail\nfirst_name\nlast_name\nemail_domain\n\n\nstr\nstr\nstr\nstr\n\n\n\n\n\"atticus.kensington@GMAIL\"\n\"atticus\"\n\"kensington\"\n\"GMAIL\"\n\n\n\"barrett_amelia@YAHOO \"\n\"barrett\"\n\"amelia\"\n\"YAHOO\"\n\n\n\"carrington54543jack@myorg\"\n\"carrington\"\n\"jack\"\n\"myorg\"\n\n\n\"emma.miller@gmaiL \"\n\"emma\"\n\"miller\"\n\"gmaiL\"\n\n\n\"brielle.ironwood@GMAIL \"\n\"brielle\"\n\"ironwood\"\n\"GMAIL\"\n\n\n\n\n\n\nHere we count the email domains, normalizing all domains to lowercase before grouping, since the raw data contains inconsistent capitalization. This ensures that variations of the same domain are counted together rather than treated as separate entries.\n\n\nShow the code\n# Unique email domain count\ndomain_count = (df.with_columns(pl.col(\"email_domain\").str.to_lowercase()).group_by(\"email_domain\").len().sort(\"len\", descending=True))\ndomain_count\n\n\n\nshape: (3, 2)\n\n\n\nemail_domain\nlen\n\n\nstr\nu32\n\n\n\n\n\"gmail\"\n707\n\n\n\"myorg\"\n286\n\n\n\"yahoo\"\n193\n\n\n\n\n\n\nThe dataset is filtered to respondents who have seen at least one Star Wars film. Rather than relying on the self-reported seen_any column, we check the six individual film columns directly — if any are non-null, the respondent has seen at least one film.\n\n\nShow the code\n# Respondents who have seen at least one Star Wars film\nseen_cols = [c for c in df.columns if c.startswith(\"seen_\") and c != \"seen_any\"]\ndf_seen = df.filter(\n    pl.any_horizontal([pl.col(c).is_not_null() for c in seen_cols])\n)\n\nprint(df_seen.head(5))\n\n\nshape: (5, 42)\n┌───────────┬───────────┬──────────┬───────────┬───┬───────────┬───────────┬───────────┬───────────┐\n│ responden ┆ email     ┆ seen_any ┆ star_wars ┆ … ┆ location  ┆ first_nam ┆ last_name ┆ email_dom │\n│ tid       ┆ ---       ┆ ---      ┆ _fan      ┆   ┆ ---       ┆ e         ┆ ---       ┆ ain       │\n│ ---       ┆ str       ┆ str      ┆ ---       ┆   ┆ str       ┆ ---       ┆ str       ┆ ---       │\n│ i64       ┆           ┆          ┆ str       ┆   ┆           ┆ str       ┆           ┆ str       │\n╞═══════════╪═══════════╪══════════╪═══════════╪═══╪═══════════╪═══════════╪═══════════╪═══════════╡\n│ 329287999 ┆ atticus.k ┆ Yes      ┆ Yes       ┆ … ┆ South     ┆ atticus   ┆ kensingto ┆ GMAIL     │\n│ 8         ┆ ensington ┆          ┆           ┆   ┆ Atlantic  ┆           ┆ n         ┆           │\n│           ┆ @GMAIL    ┆          ┆           ┆   ┆           ┆           ┆           ┆           │\n│ 329276527 ┆ carringto ┆ Yes      ┆ No        ┆ … ┆ West      ┆ carringto ┆ jack      ┆ myorg     │\n│ 1         ┆ n54543jac ┆          ┆           ┆   ┆ North     ┆ n         ┆           ┆           │\n│           ┆ k@myorg   ┆          ┆           ┆   ┆ Central   ┆           ┆           ┆           │\n│ 329276311 ┆ emma.mill ┆ Yes      ┆ Yes       ┆ … ┆ West      ┆ emma      ┆ miller    ┆ gmaiL     │\n│ 6         ┆ er@gmaiL  ┆          ┆           ┆   ┆ North     ┆           ┆           ┆           │\n│           ┆           ┆          ┆           ┆   ┆ Central   ┆           ┆           ┆           │\n│ 329273122 ┆ brielle.i ┆ Yes      ┆ Yes       ┆ … ┆ West      ┆ brielle   ┆ ironwood  ┆ GMAIL     │\n│ 0         ┆ ronwood@G ┆          ┆           ┆   ┆ North     ┆           ┆           ┆           │\n│           ┆ MAIL      ┆          ┆           ┆   ┆ Central   ┆           ┆           ┆           │\n│ 329271938 ┆ harper.as ┆ Yes      ┆ Yes       ┆ … ┆ Middle    ┆ harper    ┆ ashford   ┆ GmAIl     │\n│ 0         ┆ hford@GmA ┆          ┆           ┆   ┆ Atlantic  ┆           ┆           ┆           │\n│           ┆ Il        ┆          ┆           ┆   ┆           ┆           ┆           ┆           │\n└───────────┴───────────┴──────────┴───────────┴───┴───────────┴───────────┴───────────┴───────────┘\n\n\nHere we pull apart the answers that are numbers yet currently formatted as strings and turn them into numbers. For range values, the lower number is used. The categories must be numeric for machine learning, so each category is mapped to an integer. This preserves the ordering of each variable and keeps the conversion simple and consistent. Rows where no income was reported are removed. For other missing values, we filled it with a 0 before passing to the model. Now instead of dropping important rows, we can just drop it from that feature. Now we can use ‘df_for_ml’ as our machine learning ready data set!\n\n\nShow the code\n# Age\nage_map = {\"18-29\": 18, \"30-44\": 30, \"45-60\": 45, \"&gt; 60\": 60}\n\ndf_for_ml = (\n    df_seen\n    .with_columns(pl.col(\"age\").replace(age_map).cast(pl.Int32).alias(\"age_num\"))\n    .drop(\"age\")\n)\n# Education\neducation_ = {\n    \"Less than high school degree\": 1,\n    \"High school degree\": 2,\n    \"Some college or Associate degree\": 3,\n    \"Bachelor degree\": 4,\n    \"Graduate degree\": 5,\n}\n\ndf_for_ml = (\n    df_for_ml\n    .with_columns(pl.col(\"education\").replace(education_).cast(pl.Int32).alias(\"education_num\"))\n    .drop(\"education\")\n)\n# Income\nincome = {\n    \"$0 - $24,999\": 0,\n    \"$25,000 - $49,999\": 25000,\n    \"$50,000 - $99,999\": 50000,\n    \"$100,000 - $149,999\": 100000,\n    \"$150,000+\": 150000,\n}\n\ndf_for_ml = (\n    df_for_ml\n    .with_columns(pl.col(\"household_income\").replace(income).cast(pl.Int64).alias(\"income_num\"))\n    .drop(\"household_income\")\n)\n# Favorability\nfav = {\n    \"Very favorably\": 5,\n    \"Somewhat favorably\": 4,\n    \"Neither favorably nor unfavorably (neutral)\": 3,\n    \"Somewhat unfavorably\": 2,\n    \"Very unfavorably\": 1,\n    \"Unfamiliar (N/A)\": 0,\n}\n\nfav_columns = [c for c in df.columns if c.startswith(\"fav_\")]\n\ndf_for_ml = (\n    df_for_ml\n    .with_columns([pl.col(c).replace(fav).cast(pl.Int32) for c in fav_columns])\n)\n\n# Drop identifier columns\ndf_for_ml = df_for_ml.drop([\"respondentid\", \"first_name\", \"last_name\", \"email\"])\n\n# Household income \ndf_for_ml = df_for_ml.with_columns(\n    (pl.col(\"income_num\") &gt;= 50000).cast(pl.Int8).alias(\"high_income\")\n)\n\n# show head of complete data set \ndf_for_ml.select([\"age_num\", \"education_num\", \"income_num\"] + fav_columns).head(5)\n\n\n\nshape: (5, 17)\n\n\n\nage_num\neducation_num\nincome_num\nfav_Han_Solo\nfav_Luke_Skywalker\nfav_Princess_Leia_Organa\nfav_Anakin_Skywalker\nfav_Obi_Wan_Kenobi\nfav_Emperor_Palpatine\nfav_Darth_Vader\nfav_Lando_Calrissian\nfav_Boba_Fett\nfav_C-3P0\nfav_R2_D2\nfav_Jar_Jar_Binks\nfav_Padme_Amidala\nfav_Yoda\n\n\ni32\ni32\ni64\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\ni32\n\n\n\n\n18\n2\nnull\n5\n5\n5\n5\n5\n5\n5\n0\n0\n5\n5\n5\n5\n5\n\n\n18\n2\n0\n4\n4\n4\n4\n4\n0\n0\n0\n0\n0\n0\n0\n0\n0\n\n\n18\n3\n100000\n5\n5\n5\n5\n5\n4\n5\n4\n2\n5\n5\n5\n5\n5\n\n\n18\n3\n100000\n5\n4\n4\n2\n5\n1\n4\n3\n5\n4\n4\n1\n4\n4\n\n\n18\n4\n25000\n5\n5\n5\n5\n5\n3\n5\n3\n4\n4\n4\n4\n3\n5\n\n\n\n\n\n\nAny remaining string inputs that couldn’t be mapped to an integer are one-hot encoded, converting them to binary columns. Here we’re able to create our Machine Learning model to predict if a respondent’s household income is over $50,000. We remove the rows where the respondents didn’t record their income.Then we choose our features and target. We then split the data 70/30 and created our model. The model’s accuracy is shown below.\n\n\nShow the code\n# One-hot encode remaining strings\nstr_cols = df_for_ml.select(cs.string()).columns\ndf_for_ml = df_for_ml.to_dummies(columns=str_cols)\n\n# Remove rows where income was not reported\ndf_model = df_for_ml.filter(pl.col(\"high_income\").is_not_null())\n\n# Set features\nfeature_cols = [c for c in df_model.columns if c not in [\"high_income\", \"income_num\"]]\n\nfeatures = df_model.select(feature_cols).fill_null(0).to_numpy()\ntarget = df_model.select(\"high_income\").to_numpy().ravel()\n\nx_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.3)\n\n# Create model\nmodel = RandomForestClassifier()\nmodel.fit(x_train, y_train)\n\ny_pred = model.predict(x_test)\n\nacc = metrics.accuracy_score(y_test, y_pred)\nprint('accuracy:', acc)\n\n\naccuracy: 0.6157635467980296"
+  },
+  {
+    "objectID": "Full_Stack/unit5_final_report.html#results",
+    "href": "Full_Stack/unit5_final_report.html#results",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Results",
+    "text": "Results\nHere is the shape of the table for all the respondents who have seen at least one film, adding up to a total of 835.\n\n\nShow the code\n# Shape of table for respondents who have seen at least one Star Wars film\nprint(df_seen.shape)\n\n\n(835, 42)\n\n\nThe model reached 65% accuracy on the test set. Looking at the classification report, precision and recall are stronger for the under $50k group than the over $50k group, which makes sense because higher-income respondents aren’t as represented in the data.\n\n\nShow the code\nprint(classification_report(y_test, y_pred, target_names=[\"&lt; $50k\", \"&gt;= $50k\"]))\n\n\n              precision    recall  f1-score   support\n\n      &lt; $50k       0.42      0.21      0.28        72\n     &gt;= $50k       0.66      0.84      0.74       131\n\n    accuracy                           0.62       203\n   macro avg       0.54      0.52      0.51       203\nweighted avg       0.57      0.62      0.57       203\n\n\n\nTo validate our dataset, we recreated two charts from the original FiveThirtyEight article. The distributions line up closely, confirming the data is accurate.\n\n\nShow the code\n# stretch — Chart 1: Which Star Wars films have you seen?\nseen_film_cols = [c for c in df.columns if c.startswith(\"seen_\") and c != \"seen_any\"]\nn_seen = len(df_seen)\n\nfilm_name_map = {\n    \"seen_Episode_I\":   \"The Phantom Menace\",\n    \"seen_Episode_II\":  \"Attack of the Clones\",\n    \"seen_Episode_III\": \"Revenge of the Sith\",\n    \"seen_Episode_IV\":  \"A New Hope\",\n    \"seen_Episode_V\":   \"The Empire Strikes Back\",\n    \"seen_Episode_VI\":  \"Return of the Jedi\",\n}\n\nepisode_order = [\n    \"The Phantom Menace\",\n    \"Attack of the Clones\",\n    \"Revenge of the Sith\",\n    \"A New Hope\",\n    \"The Empire Strikes Back\",\n    \"Return of the Jedi\",\n]\n\nchart1 = pl.DataFrame([\n    {\"film\": film_name_map[c],\n     \"pct\": round(df_seen[c].is_not_null().sum() / n_seen * 100)}\n    for c in seen_film_cols if c in film_name_map\n])\n\n# coord_flip reverses order, so feed the list bottom-to-top\nfilm_order = list(reversed(episode_order))\n\n(ggplot(chart1, aes(x=\"film\", y=\"pct\"))\n    + geom_bar(stat=\"identity\", fill=\"#008fd5\", width=0.7)\n    + geom_text(aes(label=\"pct\"), nudge_y=3, format=\"{d}%\", size=7, color=\"#008fd5\")\n    + coord_flip()\n    + scale_x_discrete(limits=film_order)\n    + scale_y_continuous(limits=[0, 100])\n    + labs(\n        title=\"Which 'Star Wars' Movies Have You Seen?\",\n        subtitle=\"Of 835 respondents who have seen any Star Wars film\",\n        x=\"\", y=\"\")\n    + theme(\n        panel_grid_major_y=element_blank(),\n        panel_grid_minor=element_blank(),\n        axis_text_y=element_text(hjust=1))\n)\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\n# stretch — Chart 2 (article's Chart 5): Who Shot First?\nshot_counts = (\n    df_seen\n    .filter(pl.col(\"who_shot_first\").is_not_null())\n    .group_by(\"who_shot_first\")\n    .len()\n    .rename({\"len\": \"count\"})\n    .with_columns(\n        (pl.col(\"count\") / pl.col(\"count\").sum() * 100).round().alias(\"pct\")\n    )\n)\n\nn_answered = shot_counts[\"count\"].sum()\n\n# Order: Han on top, then Greedo, then \"I don't understand...\"\nshot_order = [\"I don't understand this question\", \"Greedo\", \"Han\"]\n\n(ggplot(shot_counts, aes(x=\"who_shot_first\", y=\"pct\"))\n    + geom_bar(stat=\"identity\", fill=\"#008fd5\", width=0.7)\n    + geom_text(aes(label=\"pct\"), nudge_y=2, format=\"{d}%\", size=7, color=\"#008fd5\")\n    + coord_flip()\n    + scale_x_discrete(limits=shot_order)\n    + scale_y_continuous(limits=[0, 60])\n    + labs(\n        title=\"Who Shot First?\",\n        subtitle=f\"According to {n_answered} respondents\",\n        x=\"\", y=\"\")\n    + theme(\n        panel_grid_major_y=element_blank(),\n        panel_grid_minor=element_blank(),\n        axis_text_y=element_text(hjust=1))\n)"
+  },
+  {
+    "objectID": "Full_Stack/unit5_final_report.html#conclusion",
+    "href": "Full_Stack/unit5_final_report.html#conclusion",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Conclusion",
+    "text": "Conclusion\nThe model reached around 65% accuracy predicting whether a Star Wars fan earns over $50,000. The biggest limitation is that this is self-reported data, so people may not answer income questions accurately or at all. Going forward, it would be interesting to see if adding more demographic features or trying a different model type could push accuracy higher. The Star Wars data is fun to work with but probably isn’t the most reliable dataset for income prediction, but it is a good proof of concept that survey data can be used for this kind of prediction."
+  },
+  {
+    "objectID": "Full_Stack/project1.html",
+    "href": "Full_Stack/project1.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Full Stack",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task2.html",
+    "href": "Exploration/unit2_task2.html",
+    "title": "Client Report - Flights: Column Aggregation",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nfrom polars import selectors as cs\nimport requests #new for reading in JSON\nimport io       #new for reading in JSON\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nurl = \"https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json\"\nresponse = requests.get(url)\ndf = pl.read_json(io.BytesIO(response.content))",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 2"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task2.html#question-1",
+    "href": "Exploration/unit2_task2.html#question-1",
+    "title": "Client Report - Flights: Column Aggregation",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nCalculate the sample size (i.e. number of rows in the dataset) for each airport in each year. What do you notice?\nHere we are finding that for almost every airport has over 10 instances per year sampled. There are some outliers and unknowns but for the most part there is a great sample size from each airport and every year.\n\n\nShow the code\n# Include and execute your code here\nnew = (\n    df\n    .group_by('airport_name','year')\n    .agg(pl.len().alias(\"sample size\"))\n)\nprint(new.sort(\"year\"))\n\n\nshape: (89, 3)\n┌─────────────────────────────────┬──────┬─────────────┐\n│ airport_name                    ┆ year ┆ sample size │\n│ ---                             ┆ ---  ┆ ---         │\n│ str                             ┆ i64  ┆ u32         │\n╞═════════════════════════════════╪══════╪═════════════╡\n│ Atlanta, GA: Hartsfield-Jackso… ┆ null ┆ 22          │\n│                                 ┆ null ┆ 1           │\n│ Washington, DC: Washington Dul… ┆ 2005 ┆ 11          │\n│ Chicago, IL: Chicago O'Hare In… ┆ 2005 ┆ 12          │\n│                                 ┆ 2005 ┆ 4           │\n│ …                               ┆ …    ┆ …           │\n│ Chicago, IL: Chicago O'Hare In… ┆ 2015 ┆ 11          │\n│ San Diego, CA: San Diego Inter… ┆ 2015 ┆ 12          │\n│                                 ┆ 2015 ┆ 3           │\n│ Atlanta, GA: Hartsfield-Jackso… ┆ 2015 ┆ 11          │\n│ Denver, CO: Denver Internation… ┆ 2015 ┆ 11          │\n└─────────────────────────────────┴──────┴─────────────┘",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 2"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task2.html#question-2",
+    "href": "Exploration/unit2_task2.html#question-2",
+    "title": "Client Report - Flights: Column Aggregation",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nWhich airport has the worst delays? Describe the metric you chose, and why you chose it to determine the “worst” airport. Your answer should include a summary table that lists (for each airport) the total number of flights, total number of delayed flights, proportion of delayed flights, and average delay time in hours.\nI decided to sort my table by the percentage of flights which were delayed and then by the amount (in hours) of an average delay. Here we can see which airports delay the highest amount of flights - and the average delay also seems to correlate with the highest percentage of flights.\n\n\nShow the code\n# Include and execute your code here\nworst = (\n  df\n  .with_columns(pl.selectors.starts_with(\"num_of\").cast(pl.Int64, strict=False)).filter(~pl.any_horizontal(pl.selectors.starts_with(\"num_of\") == -999))\n  .group_by(\"airport_code\")\n  .agg(pl.col(\"num_of_delays_total\").sum(), pl.col(\"num_of_flights_total\").sum(), pl.col(\"minutes_delayed_total\").sum())\n  .with_columns(pct_delayed = pl.col(\"num_of_delays_total\") / pl.col(\"num_of_flights_total\"), avg_delay = (pl.col(\"minutes_delayed_total\")/ 60 / pl.col(\"num_of_delays_total\"))))\n\nprint(worst.sort(\"pct_delayed\", \"avg_delay\", descending= True))\n\n\nshape: (7, 6)\n┌──────────────┬───────────────────┬──────────────────┬──────────────────┬─────────────┬───────────┐\n│ airport_code ┆ num_of_delays_tot ┆ num_of_flights_t ┆ minutes_delayed_ ┆ pct_delayed ┆ avg_delay │\n│ ---          ┆ al                ┆ otal             ┆ total            ┆ ---         ┆ ---       │\n│ str          ┆ ---               ┆ ---              ┆ ---              ┆ f64         ┆ f64       │\n│              ┆ i64               ┆ i64              ┆ i64              ┆             ┆           │\n╞══════════════╪═══════════════════╪══════════════════╪══════════════════╪═════════════╪═══════════╡\n│ SFO          ┆ 425604            ┆ 1630945          ┆ 26550493         ┆ 0.260955    ┆ 1.039718  │\n│ ORD          ┆ 667148            ┆ 3084050          ┆ 44402936         ┆ 0.216322    ┆ 1.109273  │\n│ IAD          ┆ 168467            ┆ 851571           ┆ 10283478         ┆ 0.197831    ┆ 1.017358  │\n│ SAN          ┆ 175132            ┆ 917862           ┆ 8276248          ┆ 0.190804    ┆ 0.78762   │\n│ DEN          ┆ 434514            ┆ 2400357          ┆ 23320834         ┆ 0.181021    ┆ 0.894518  │\n│ ATL          ┆ 414373            ┆ 2464336          ┆ 24022613         ┆ 0.168148    ┆ 0.966223  │\n│ SLC          ┆ 200874            ┆ 1391030          ┆ 9906189          ┆ 0.144407    ┆ 0.821924  │\n└──────────────┴───────────────────┴──────────────────┴──────────────────┴─────────────┴───────────┘",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 2"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task2.html#question-3",
+    "href": "Exploration/unit2_task2.html#question-3",
+    "title": "Client Report - Flights: Column Aggregation",
+    "section": "QUESTION 3",
+    "text": "QUESTION 3\nCreate a barplot showing the proportion of all flights that are delayed at each airport. Describe what you learn from this graph.\nHere we see that the San Fransico airport has the highest percentage of delayed flights and the Salt Lake City airport has the least amount of delayed flights. We can also see in this graph that all airports delay less than 30% of their flights.\n\n\nShow the code\npercent = worst.sort(pl.col(\"pct_delayed\"), descending=True)\n# Include and execute your code here\n(ggplot(percent, aes(x= \"airport_code\", y = \"pct_delayed\"))\n + geom_bar(stat = \"identity\")\n + labs (title = \"Percentage of Flights Delayed vs Airport\", x= \"Airport (by code)\", y = \"Percentage of Delayed Flights\")\n)",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 2"
+    ]
+  },
+  {
+    "objectID": "Exploration/project3.html",
+    "href": "Exploration/project3.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Data Exploration",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Exploration/project1.html",
+    "href": "Exploration/project1.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Data Exploration",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Competition/project2.html",
+    "href": "Competition/project2.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Competitions",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task3.html",
+    "href": "Cleansing/unit1_task3.html",
+    "title": "Client Report - Famous Names",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport polars.selectors as cs\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pl.read_csv(\"https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed69e7f1/names_year_csv.csv\")",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 3"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task3.html#question-1",
+    "href": "Cleansing/unit1_task3.html#question-1",
+    "title": "Client Report - Famous Names",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\n\nMake a new column that represents the total number of babies with your name for only those states in which you have lived. (If you have only ever lived in one state, pick at least one other state so you get practice summing across columns). Make a graph displaying that total for your name over time.\nHere we can see the usage of the name “Ella” in the states Colorado, Texas, and Montana, all states in which I have already lived. The red dots signifies my birth year, in which we see a huge peak in the usage of the name “Ella”\n\n\nShow the code\n# Q1\nmy_name = df.select(\n  \"name\",\n  cs.by_name(\"year\", \"CO\", \"TX\", \"MT\")\n).filter(pl.col(\"name\")==\"Ella\").with_columns(total = pl.col(\"CO\") + pl.col(\"TX\") + pl.col(\"MT\"))\ndot = my_name.filter(pl.col(\"year\") == 2005).with_columns(\n    pl.lit(\"My Birth Year\").alias(\"lab\")\n)\n\n(ggplot(my_name, aes(x=\"year\", y=\"total\"))\n+ geom_line()\n+ geom_text(aes(label=\"lab\"), nudge_y=50, color=\"red\", data=dot)\n+ geom_point(data=dot, color=\"red\", size=4)\n+ labs(title=\"Usage of the Name 'Ella' Over Time in States Colorado, Texas and Montana\")\n+ scale_x_continuous(format=\"{d}\")\n)",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 3"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task3.html#question-2",
+    "href": "Cleansing/unit1_task3.html#question-2",
+    "title": "Client Report - Famous Names",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\n\nLet’s look at a name that is special for members of the church: Brigham. For each year, calculate what proportion of babies named Brigham were born in Idaho and Utah? Make a graph displaying the proportion over time.\n\nThis graph shows us the usage of the name “Brigham” in the states of Idaho and Utah. We can see that since the late 2010’s, the usage of the name has been declining in these states.\n\n\nShow the code\n# Q2\nbrigham_name = df.select(\n  'name',\n  cs.by_name(\"UT\", \"ID\", \"year\", \"Total\")\n).filter(pl.col(\"name\") == (\"Brigham\")).with_columns(total_new = pl.col(\"UT\")+pl.col (\"ID\"))\nbrigham_name = brigham_name.with_columns(proportion = pl.col(\"total_new\")/ pl.col(\"Total\"))\n(ggplot(\n  brigham_name, aes(x = \"year\", y=\"proportion\"))\n+ geom_line()\n+ labs(title = \"Proportion of the name 'Brigham' in Utah and Idaho vs other states\")\n+ scale_x_continuous(format=\"{d}\")\n)",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 3"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task3.html#question-3",
+    "href": "Cleansing/unit1_task3.html#question-3",
+    "title": "Client Report - Famous Names",
+    "section": "QUESTION 3",
+    "text": "QUESTION 3\n\nConsider doing some data validation. For the name David, calculate a sum of all 50 states and District of Columbia for each year. Now compare that total to the value in the ‘Total’ column. In which years, if any, do they not agree?\n\nThis graph has two lines- even though it may be hard to see. One line shows us the total included in the csv file. The blue line shows the calculated total from all 50 states after summing the columns. We can see that there are no discrepencies and the data is good data.\n\n\nShow the code\n# Q3\ndavid = df.filter(pl.col(\"name\") == (\"David\")).with_columns(summed_total = pl.sum_horizontal(df.columns[2:53]))\nnew_david = david.select(\"name\", \"year\", \"Total\", \"summed_total\")\n(ggplot(new_david, aes(x = \"year\", y = \"Total\"))\n+ geom_line()\n+ geom_line(aes(y = \"summed_total\"), color = \"blue\")\n+ labs(y = \"total\", title = \"Use of the name 'David' calculated vs. totaled given\")\n+ scale_x_continuous(format=\"{d}\")\n)",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 3"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task1.html",
+    "href": "Cleansing/unit1_task1.html",
+    "title": "Client Report - Exploring Names",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pl.read_csv(\"https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed69e7f1/names_year_csv.csv\")",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task1.html#question-1",
+    "href": "Cleansing/unit1_task1.html#question-1",
+    "title": "Client Report - Exploring Names",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nWhat was the earliest year that the name ‘Felisha’ was used?\nThe earliest year Felisha was used was 1964. It was used 20 times, 9 times in Texas alone. We can find this by filtering the name and sorting by the year.\n\n\nShow the code\n# Q1\nprint(df.filter(name = \"Felisha\").sort('year').head(1))\n\n\nshape: (1, 54)\n┌─────────┬──────┬─────┬─────┬───┬─────┬─────┬─────┬───────┐\n│ name    ┆ year ┆ AK  ┆ AL  ┆ … ┆ WI  ┆ WV  ┆ WY  ┆ Total │\n│ ---     ┆ ---  ┆ --- ┆ --- ┆   ┆ --- ┆ --- ┆ --- ┆ ---   │\n│ str     ┆ i64  ┆ i64 ┆ i64 ┆   ┆ i64 ┆ i64 ┆ i64 ┆ i64   │\n╞═════════╪══════╪═════╪═════╪═══╪═════╪═════╪═════╪═══════╡\n│ Felisha ┆ 1964 ┆ 0   ┆ 6   ┆ … ┆ 0   ┆ 0   ┆ 0   ┆ 20    │\n└─────────┴──────┴─────┴─────┴───┴─────┴─────┴─────┴───────┘",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task1.html#question-2",
+    "href": "Cleansing/unit1_task1.html#question-2",
+    "title": "Client Report - Exploring Names",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nWhat year had the most babies named ‘David’? How many babies were named ‘David’ that year?\nThis data captures 114 years that the name David was used. It was used with the most frequency in the year 1955, when there were 86,389 people named David.\n\n\nShow the code\n# Q2\nprint(df.filter(name = \"David\").sort('Total', descending=True).head(1))\n\n\nshape: (1, 54)\n┌───────┬──────┬─────┬──────┬───┬──────┬──────┬─────┬───────┐\n│ name  ┆ year ┆ AK  ┆ AL   ┆ … ┆ WI   ┆ WV   ┆ WY  ┆ Total │\n│ ---   ┆ ---  ┆ --- ┆ ---  ┆   ┆ ---  ┆ ---  ┆ --- ┆ ---   │\n│ str   ┆ i64  ┆ i64 ┆ i64  ┆   ┆ i64  ┆ i64  ┆ i64 ┆ i64   │\n╞═══════╪══════╪═════╪══════╪═══╪══════╪══════╪═════╪═══════╡\n│ David ┆ 1955 ┆ 179 ┆ 1207 ┆ … ┆ 2403 ┆ 1144 ┆ 193 ┆ 86389 │\n└───────┴──────┴─────┴──────┴───┴──────┴──────┴─────┴───────┘",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task1.html#question-3",
+    "href": "Cleansing/unit1_task1.html#question-3",
+    "title": "Client Report - Exploring Names",
+    "section": "QUESTION 3",
+    "text": "QUESTION 3\nWhat year did your name hit its peak? How many babies were named your name in that year?\nMy name, Ella, hit it’s peak in 2010, being used 9,883 times.\n\n\nShow the code\n# Q3\nprint(df.filter(name = \"Ella\").sort(\"Total\", descending=True).head(1))\n\n\nshape: (1, 54)\n┌──────┬──────┬─────┬─────┬───┬─────┬─────┬─────┬───────┐\n│ name ┆ year ┆ AK  ┆ AL  ┆ … ┆ WI  ┆ WV  ┆ WY  ┆ Total │\n│ ---  ┆ ---  ┆ --- ┆ --- ┆   ┆ --- ┆ --- ┆ --- ┆ ---   │\n│ str  ┆ i64  ┆ i64 ┆ i64 ┆   ┆ i64 ┆ i64 ┆ i64 ┆ i64   │\n╞══════╪══════╪═════╪═════╪═══╪═════╪═════╪═════╪═══════╡\n│ Ella ┆ 2010 ┆ 23  ┆ 164 ┆ … ┆ 267 ┆ 54  ┆ 15  ┆ 9883  │\n└──────┴──────┴─────┴─────┴───┴─────┴─────┴─────┴───────┘",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task1.html#question-4",
+    "href": "Cleansing/unit1_task1.html#question-4",
+    "title": "Client Report - Exploring Names",
+    "section": "QUESTION 4",
+    "text": "QUESTION 4\nIn the most recent year, what was the most common female name in Utah?\nHere we see the most common female name in Utah in the year 2024 is Olivia. Here we are assuming the names Oliver, Liam, Henry, and William are all male names. This assumption leaves us with Olivia, which was used 215 times in the state of Utah in the year 2024.\n\n\nShow the code\n# Q5\ndfq4 = df.select (\n  pl.col ('name'),\n  pl.col(\"year\"),\n  pl.col(\"UT\"),\n)\ndfq4 = dfq4.sort(\"year\", \"UT\", descending = True)\nprint(dfq4.head())\n\n\nshape: (5, 3)\n┌─────────┬──────┬─────┐\n│ name    ┆ year ┆ UT  │\n│ ---     ┆ ---  ┆ --- │\n│ str     ┆ i64  ┆ i64 │\n╞═════════╪══════╪═════╡\n│ Oliver  ┆ 2024 ┆ 285 │\n│ Liam    ┆ 2024 ┆ 260 │\n│ Henry   ┆ 2024 ┆ 238 │\n│ William ┆ 2024 ┆ 218 │\n│ Olivia  ┆ 2024 ┆ 215 │\n└─────────┴──────┴─────┘",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing/project2.html",
+    "href": "Cleansing/project2.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Data Cleansing",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Cleansing/project1.html",
+    "href": "Cleansing/project1.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Data Cleansing",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing/project3.html",
+    "href": "Cleansing/project3.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Data Cleansing",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task2.html",
+    "href": "Cleansing/unit1_task2.html",
+    "title": "Client Report - What’s in a Name?",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pl.read_csv(\"https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed69e7f1/names_year_csv.csv\")",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 2"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task2.html#question-1",
+    "href": "Cleansing/unit1_task2.html#question-1",
+    "title": "Client Report - What’s in a Name?",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\n\nHow does your name at your birth year compare to its use historically? Your must provide a chart. The years labels on your charts should not include a comma.\nHere this red dot marks the year that I was born. We can see that my name was used when it was almost at its peak and was very popular in the years surrounding my birth year.\n\n\nShow the code\n# Q1\nella = df.filter(pl.col(\"name\")==\"Ella\")\n(ggplot(ella, aes(x=\"year\", y=\"Total\")) \n+ geom_line() \n+ geom_point(data= ella.filter(pl.col(\"year\") == 2005), color=\"red\",size = 4)\n+ labs(title = \"Usage of the Name 'Tiana' Over Time\", x=\"Year\", y = \"Usage of the name Ella\")\n+ scale_x_continuous(format=\"{d}\")\n)",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 2"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task2.html#question-2",
+    "href": "Cleansing/unit1_task2.html#question-2",
+    "title": "Client Report - What’s in a Name?",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nThink of a unique name from a famous movie. Plot the usage of that name and see how changes line up with the movie release. Does it look like the movie had an effect on usage?\nThe green dot marks when the movie “Princess and the Frog” was released, with the main character being named Tiana. We can see that after the movie was released, the name was used more frequently, but still not as frequently as the years before the movie was even released.\n\n\nShow the code\n# Q2\n\nTiana = df.filter(pl.col(\"name\")==\"Tiana\")\n(ggplot(Tiana, aes(x=\"year\", y=\"Total\")) \n+ geom_line() \n+ geom_point(data= Tiana.filter(pl.col(\"year\") == 2009), color=\"green\",size = 4)\n+ labs(title = \"Usage of the Name 'Tiana' Over Time\", x=\"Year\", y = \"Usage of the name Tiana\")\n+ scale_x_continuous(format=\"{d}\")\n)",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 2"
+    ]
+  },
+  {
+    "objectID": "Cleansing/unit1_task2.html#question-3",
+    "href": "Cleansing/unit1_task2.html#question-3",
+    "title": "Client Report - What’s in a Name?",
+    "section": "QUESTION 3",
+    "text": "QUESTION 3\nMary, Martha, Peter, and Paul are all Christian names. From 1920 - 2000, compare the name usage of each of the four names in a single chart. What trends do you notice?\nWhile not all of the names have the same amount of uses, they have a similar trend in that between 1920 and 1970 they were used frequently and after 1970 they began to be used less and less frequently as the population drifted a little from common and traditional names.\n\n\nShow the code\n# Q3\nold_names = df.filter(\n  (pl.col(\"name\").is_in([\"Mary\", \"Martha\", \"Peter\", \"Paul\"])))\n(ggplot(old_names, aes(x=\"year\", y=\"Total\", color = \"name\")) \n+ geom_line()\n+ labs(title = \"Usage of the Names 'Mary', 'Martha', 'Peter', and 'Paul' Over Time\", x=\"Year\", y = \"Total\")\n\n+ scale_x_continuous(limits=(1920,2000), format=\"{d}\")\n)",
+    "crumbs": [
+      "Data Cleansing",
+      "Unit 1: Names Task 2"
+    ]
+  },
+  {
+    "objectID": "Competition/project1.html",
+    "href": "Competition/project1.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Competitions",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Competition/project3.html",
+    "href": "Competition/project3.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Competitions",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Exploration/project2.html",
+    "href": "Exploration/project2.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Data Exploration",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task1.html",
+    "href": "Exploration/unit2_task1.html",
+    "title": "Client Report - Flights: Creating New Columns",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport requests #new for reading in JSON\nimport io       #new for reading in JSON\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nurl = \"https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json\"\nresponse = requests.get(url)\ndf = pl.read_json(io.BytesIO(response.content))",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 1"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task1.html#question-1",
+    "href": "Exploration/unit2_task1.html#question-1",
+    "title": "Client Report - Flights: Creating New Columns",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\n\nCreate a new ‘season’ column. Define ‘season’ as:\n\nWinter for January, Febuary (note the mispelling), March\nSpring for April, May, June\nSummer for July, August, September\nFall for October, November, December\nAll other rows can be assigned a value of ‘Unknown’\n\n\nNo discussion needed for this question\n\n\nShow the code\n# Include and execute your code here\n\ndf = df.with_columns(season = pl.when(pl.col(\"month\").is_in([\"January\", \"Febuary\", \"March\"])).then(pl.lit(\"Winter\")).when(pl.col(\"month\").is_in([\"April\", \"May\", \"June\"])).then(pl.lit(\"Spring\")).when(pl.col(\"month\").is_in([\"July\", \"August\", \"September\"])).then(pl.lit(\"Summer\")).when(pl.col(\"month\").is_in([\"October\", \"November\", \"December\"])).then(pl.lit(\"Fall\")).otherwise(pl.lit(\"Unknown\")))\nprint(df.select(\"month\", \"season\").head(5))\n\n\nshape: (5, 2)\n┌─────────┬────────┐\n│ month   ┆ season │\n│ ---     ┆ ---    │\n│ str     ┆ str    │\n╞═════════╪════════╡\n│ January ┆ Winter │\n│ January ┆ Winter │\n│ January ┆ Winter │\n│ January ┆ Winter │\n│ January ┆ Winter │\n└─────────┴────────┘",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 1"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task1.html#question-2",
+    "href": "Exploration/unit2_task1.html#question-2",
+    "title": "Client Report - Flights: Creating New Columns",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\n\nDivide all the columns by 1000 whose name starts with num_of. Be sure to first filter out rows that contain problematic values for the columns like -999 or 1500+.\n\nNo discussion needed for this question\n\n\nShow the code\n# Include and execute your code here\n\ndf = (df.with_columns(pl.selectors.starts_with(\"num_of\").cast(pl.Int64, strict=False)).filter(~pl.any_horizontal(pl.selectors.starts_with(\"num_of\") == -999)).with_columns(pl.selectors.starts_with(\"num_of\") / 1000))\nprint(df.select(\"month\", \"num_of_delays_weather\", \"num_of_delays_late_aircraft\", \"num_of_delays_nas\").head(5))\n\n\nshape: (5, 4)\n┌─────────┬───────────────────────┬─────────────────────────────┬───────────────────┐\n│ month   ┆ num_of_delays_weather ┆ num_of_delays_late_aircraft ┆ num_of_delays_nas │\n│ ---     ┆ ---                   ┆ ---                         ┆ ---               │\n│ str     ┆ f64                   ┆ f64                         ┆ f64               │\n╞═════════╪═══════════════════════╪═════════════════════════════╪═══════════════════╡\n│ January ┆ 0.233                 ┆ 0.928                       ┆ 0.935             │\n│ January ┆ 0.061                 ┆ 1.058                       ┆ 0.895             │\n│ January ┆ 0.306                 ┆ 2.255                       ┆ 5.415             │\n│ January ┆ 0.056                 ┆ 0.68                        ┆ 0.638             │\n│ January ┆ 0.114                 ┆ 0.733                       ┆ 1.166             │\n└─────────┴───────────────────────┴─────────────────────────────┴───────────────────┘",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 1"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task1.html#question-3",
+    "href": "Exploration/unit2_task1.html#question-3",
+    "title": "Client Report - Flights: Creating New Columns",
+    "section": "QUESTION 3",
+    "text": "QUESTION 3\n\nAccording to the BTS website, the “Weather” category only accounts for severe weather delays. Mild weather delays are not counted in the “Weather” category, but are actually included in both the “nas” and “late_aircraft” categories. Using the columns you modified in the bullet above, your job is to create a new column that calculates the total number of flights (in 1,000’s) delayed by weather (both severe and mild). Show your work by printing the first 5 rows of the dataset. Use these three rules for your calculations:\n\n100% of delayed flights in the Weather category are due to weather\n\n30% of all delayed flights in the “late_aircraft” category are due to weather\n\nFrom April through August, 40% of delayed flights in the NAS category are due to weather. The rest of the months, the proportion rises to 65%\n\n\nNo discussion needed for this question\n\n\nShow the code\n# Include and execute your code here\n#df = df.with_columns(weather = (pl.col(\"num_of_delays_weather\") + (pl.col(\"num_of_delays_late_aircraft\") * .3) + pl.when(pl.col(\"month\").is_in([\"April\", \"May\", \"June\", \"July\", \"August\"])).then(pl.col(\"num_of_delays_nas\") * .4).otherwise(pl.col(\"num_of_delays_nas\") * .65) ))\ndf = df.with_columns(\n    total_weather_delays = (\n        pl.col(\"num_of_delays_weather\")\n        + (pl.col(\"num_of_delays_late_aircraft\") * 0.30)\n        + pl.when(pl.col(\"month\").is_in([\"April\", \"May\", \"June\", \"July\", \"August\"]))\n            .then(pl.col(\"num_of_delays_nas\") * 0.40)\n            .otherwise(pl.col(\"num_of_delays_nas\")* 0.65)\n    )\n)\nprint(df.select(\"month\", \"num_of_delays_weather\", \"num_of_delays_late_aircraft\", \"num_of_delays_nas\", \"total_weather_delays\").head(5))\n\n\nshape: (5, 5)\n┌─────────┬──────────────────────┬──────────────────────┬───────────────────┬──────────────────────┐\n│ month   ┆ num_of_delays_weathe ┆ num_of_delays_late_a ┆ num_of_delays_nas ┆ total_weather_delays │\n│ ---     ┆ r                    ┆ ircraft              ┆ ---               ┆ ---                  │\n│ str     ┆ ---                  ┆ ---                  ┆ f64               ┆ f64                  │\n│         ┆ f64                  ┆ f64                  ┆                   ┆                      │\n╞═════════╪══════════════════════╪══════════════════════╪═══════════════════╪══════════════════════╡\n│ January ┆ 0.233                ┆ 0.928                ┆ 0.935             ┆ 1.11915              │\n│ January ┆ 0.061                ┆ 1.058                ┆ 0.895             ┆ 0.96015              │\n│ January ┆ 0.306                ┆ 2.255                ┆ 5.415             ┆ 4.50225              │\n│ January ┆ 0.056                ┆ 0.68                 ┆ 0.638             ┆ 0.6747               │\n│ January ┆ 0.114                ┆ 0.733                ┆ 1.166             ┆ 1.0918               │\n└─────────┴──────────────────────┴──────────────────────┴───────────────────┴──────────────────────┘",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 1"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task1.html#question-4",
+    "href": "Exploration/unit2_task1.html#question-4",
+    "title": "Client Report - Flights: Creating New Columns",
+    "section": "QUESTION 4",
+    "text": "QUESTION 4\n\nUsing the new weather variable calculated above, create a boxplot showing the distribution of flights delayed by weather for each season. Describe what you learn from this graph.\n\nHere the graph shows us the results we were mainly expecting: in the winter there are more flight delays than any other season. We find that the spread of “Unknown” seasons is very wide, which checks out because it could be they delay of any given season reported here.\n\n\nShow the code\n# Include and execute your code here\n(ggplot(df, aes(x=\"season\", y=\"total_weather_delays\", color = \"season\"))\n    + geom_boxplot()\n    + labs(title = \"Quantity of Weather Delays vs Season\", x = \"Season\", y = \"Quantity of Weather Delays\")\n)",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 1"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task3.html",
+    "href": "Exploration/unit2_task3.html",
+    "title": "Client Report - Missing values",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport requests #new for reading in JSON\nimport io       #new for reading in JSON\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\nurl = \"https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json\"\nresponse = requests.get(url)\ndf = pl.read_json(io.BytesIO(response.content))",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 3"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task3.html#question-1",
+    "href": "Exploration/unit2_task3.html#question-1",
+    "title": "Client Report - Missing values",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\n\nConvert values to missing Start with a fresh copy of the flights dataset by reading it in from the link provided above (as opposed to starting with the dataset you ended with in the last assignment). Identify data values that are problematic, non-sense or impossible and change them to be missing. In your report include one record example (one row) from your clean data, in the raw JSON format. Your example should display at least one missing value so that we can verify it was done correctly. (Note: JSON will convert NaN’s to null). Describe your process for finding values that needed to be changed, and how you changed them.\n\nDescribe your results and analysis here\n\n\nShow the code\n# Include and execute your code here\nclean = df.with_columns(pl.selectors.starts_with(\"num_of\").cast(pl.Int64, strict=False)).with_columns(\n        pl.selectors.starts_with(\"num_of\").replace(-999, None),\n        pl.selectors.starts_with(\"minutes_\").replace(-999, None))\n\nprint(clean.select(\"airport_code\", pl.selectors.starts_with(\"num_of\")).filter(pl.any_horizontal(pl.selectors.starts_with(\"num_of\").is_null())).head(1))\n\n\nshape: (1, 8)\n┌────────────┬────────────┬────────────┬───────────┬───────────┬───────────┬───────────┬───────────┐\n│ airport_co ┆ num_of_fli ┆ num_of_del ┆ num_of_de ┆ num_of_de ┆ num_of_de ┆ num_of_de ┆ num_of_de │\n│ de         ┆ ghts_total ┆ ays_carrie ┆ lays_late ┆ lays_nas  ┆ lays_secu ┆ lays_weat ┆ lays_tota │\n│ ---        ┆ ---        ┆ r          ┆ _aircraft ┆ ---       ┆ rity      ┆ her       ┆ l         │\n│ str        ┆ i64        ┆ ---        ┆ ---       ┆ i64       ┆ ---       ┆ ---       ┆ ---       │\n│            ┆            ┆ i64        ┆ i64       ┆           ┆ i64       ┆ i64       ┆ i64       │\n╞════════════╪════════════╪════════════╪═══════════╪═══════════╪═══════════╪═══════════╪═══════════╡\n│ ATL        ┆ 35048      ┆ null       ┆ null      ┆ 4598      ┆ 10        ┆ 448       ┆ 8355      │\n└────────────┴────────────┴────────────┴───────────┴───────────┴───────────┴───────────┴───────────┘",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 3"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task3.html#question-2",
+    "href": "Exploration/unit2_task3.html#question-2",
+    "title": "Client Report - Missing values",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\n\nFilling in missing data For all the “minutes_delayed” columns, fill in any missing values with the median of that column. For the “num_of” columns, fill in missing values with that column’s mean.\n\nNothing to write/report for this question\n\n\nShow the code\n# Include and execute your code here\nmedian = (clean.select(pl.selectors.starts_with(\"minutes_delayed\"))).median().cast(pl.Float64)\n\nmean = (clean.select(pl.selectors.starts_with(\"num_of\"))).mean().cast(pl.Float64)\n\nmedians = clean.with_columns(    \n  [pl.col(c).fill_null(median[c][0]) for c in median.columns] +\n  [pl.col(c).fill_null(mean[c][0]) for c in mean.columns])\n\nprint(medians.select(\"airport_code\", pl.selectors.starts_with(\"num_of\")).filter(pl.any_horizontal(pl.selectors.starts_with(\"num_of\").is_null())))\n\n\nshape: (0, 8)\n┌────────────┬────────────┬────────────┬───────────┬───────────┬───────────┬───────────┬───────────┐\n│ airport_co ┆ num_of_fli ┆ num_of_del ┆ num_of_de ┆ num_of_de ┆ num_of_de ┆ num_of_de ┆ num_of_de │\n│ de         ┆ ghts_total ┆ ays_carrie ┆ lays_late ┆ lays_nas  ┆ lays_secu ┆ lays_weat ┆ lays_tota │\n│ ---        ┆ ---        ┆ r          ┆ _aircraft ┆ ---       ┆ rity      ┆ her       ┆ l         │\n│ str        ┆ f64        ┆ ---        ┆ ---       ┆ f64       ┆ ---       ┆ ---       ┆ ---       │\n│            ┆            ┆ f64        ┆ f64       ┆           ┆ f64       ┆ f64       ┆ f64       │\n╞════════════╪════════════╪════════════╪═══════════╪═══════════╪═══════════╪═══════════╪═══════════╡\n└────────────┴────────────┴────────────┴───────────┴───────────┴───────────┴───────────┴───────────┘",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 3"
+    ]
+  },
+  {
+    "objectID": "Exploration/unit2_task3.html#question-3",
+    "href": "Exploration/unit2_task3.html#question-3",
+    "title": "Client Report - Missing values",
+    "section": "QUESTION 3",
+    "text": "QUESTION 3\n\nDisplay a histogram for num_of_delays_carrier and for minutes_delayed_nas (2 separate histograms in total). Comment on the shape of each one. Also report the mean of each of these columns now that missing values have been filled in.\n\nWe can see that there were lots of null values, because the mean and median values have a huge spike. The mean of “num_of_delays_carrier” went from null to 691.29 while the median of “minutes_delayed_nas” went from 35660 to 37683 when all the null and nan values were filled. I added in a color filter to be able to see which airports were responsible for the data.\n\n\nShow the code\n# Include and execute your code here\n(ggplot(medians, aes(x=\"num_of_delays_carrier\", color = \"airport_code\")) + geom_histogram()\n)\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\n(ggplot(medians, aes(x=\"minutes_delayed_nas\", color = \"airport_code\")) + geom_histogram()\n)\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\nprint(df.filter(pl.col(\"month\") == \"n/a\").height)\n\n\n27",
+    "crumbs": [
+      "Data Exploration",
+      "Unit 2: Flights Task 3"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/project2.html",
+    "href": "Full_Stack/project2.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Full Stack",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_task1.html",
+    "href": "Full_Stack/unit5_task1.html",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "",
+    "text": "Show the code\nimport polars as pl \nimport numpy as np\nfrom lets_plot import *\nimport polars.selectors as cs\n# add the additional libraries you need to import for ML here\n\nLetsPlot.setup_html(isolated_frame=True)\n\ndata_url = \"https://byuidatascience.github.io/DS250-Course-Polars/Data/StarWars_with_emails.csv\"\nShow the code\n# Read in and tidy up the first row\na = pl.Series(pl.read_csv(data_url, skip_rows = 10, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n# Note the non-aschii character in the column \"Do you consider yourself to be a fan of the Expanded Universe\". (column AF if you open it in Excel). \n\n# BTW: Detecting what it is and where can be difficult\n\n# Lossy means that invalid utf8 values are replaced with � characters. When using other encodings than utf8 or utf8-lossy, the input is first decoded in memory with python. Defaults to utf8...ignore_errors = True does not replace the non-utf8 character with a blank space like you would hope\n\na[2] = \"seen_any\" #simply overwrite the value at index 2\n\n# Rather than changing each column header manually,\n# here we use regex to apply changes more efficiently\na = (\n  a.str.replace(r\".+seen.+\", \"seen_\")\n   .str.replace(r\".+rank.+\", \"rank_\")\n   .str.replace(r\"(.+favorably.+)\", \"fav_\")\n   .fill_null(strategy = \"forward\")\n\n   .str.replace(\"\\uFFFD+\", \"\") #this gets rid of the question marks in a diamond characters \n   .str.strip_chars()\n   .str.to_lowercase()\n   .str.replace_all(\" \", \"_\")\n   .str.replace(r\"location(.+)\", \"location\")\n\n)\na[3] = \"star_wars_fan\"\na[30] = \"who_shot_first\"\na[31] = \"know_expanded_universe\"\na[32] = \"expanded_universe_fan\"\na[33] = \"star_trek_fan\"\nShow the code\nb = pl.Series(pl.read_csv(data_url, skip_rows = 11, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n\nb = (\n  b.str.replace(r\"Star Wars: (Episode \\w+) .+\", \"${1}\")\n   .str.replace(\"Response\", \"\")\n   .str.replace_all(\" \", \"_\")\n   .fill_null(\"\")\n   .str.strip_chars()\n)\nShow the code\n#Now combine the two series, each of which contains part of the desired column header\nnew_names = (a + b).to_list()\n\n# Read in the data, skipping over the column header rows\n# and use 'new_names' as the column headers\ndf = pl.read_csv(data_url, skip_rows=12, has_header=False, new_columns = new_names )",
+    "crumbs": [
+      "Full Stack",
+      "Unit 5: Star Wars Task 1"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_task1.html#executive-summary",
+    "href": "Full_Stack/unit5_task1.html#executive-summary",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Executive Summary",
+    "text": "Executive Summary\n\nThis is a high level overview of the analysis, including the problem statement, the data used, and the main findings. It should be concise and to the point, summarizing the key insights/recommendations without going into too much detail. These are usually bullet points, no graphs. PLEASE EXPLICITLY STATE IN THIS SECTION WHETHER YOU DID THE STRETCH OR NOT! type your write-up and analysis here",
+    "crumbs": [
+      "Full Stack",
+      "Unit 5: Star Wars Task 1"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_task1.html#methods",
+    "href": "Full_Stack/unit5_task1.html#methods",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Methods",
+    "text": "Methods\nthis is a high level overview of the methods used in the analysis. This should include an explanation of data preparation steps, especially how you dealt with each categorical variable and why. Showing the resulting or original distribution of variables may be helpful. Describe how you handled missing values and outliers. How did/might your decisions impact results? Explain any feature engineering steps you took. This is also where you will put the graphs you recreated to show you validated the dataset and that it matches the article.\nRegex is used to parse the email column and extract each respondent’s first name, last name, and email domain into separate columns. Each pattern uses markers in the email — such as the start of a string and the @ symbol — to isolate the relevant text.\n\n\nShow the code\n# Extract first name, last name, and email domain from the email column\ndf = df.with_columns([\n    pl.col(\"email\").str.strip_chars().str.extract(r\"^([a-zA-Z]+)\", 1).alias(\"first_name\"),\n    pl.col(\"email\").str.strip_chars().str.extract(r\"([a-zA-Z]+)@\", 1).alias(\"last_name\"),\n    pl.col(\"email\").str.strip_chars().str.extract(r\"@([a-zA-Z0-9]+)\", 1).alias(\"email_domain\"),\n])\ndf.select([\"email\", \"first_name\", \"last_name\", \"email_domain\"]).head(5)\n\n\n\nshape: (5, 4)\n\n\n\nemail\nfirst_name\nlast_name\nemail_domain\n\n\nstr\nstr\nstr\nstr\n\n\n\n\n\"atticus.kensington@GMAIL\"\n\"atticus\"\n\"kensington\"\n\"GMAIL\"\n\n\n\"barrett_amelia@YAHOO \"\n\"barrett\"\n\"amelia\"\n\"YAHOO\"\n\n\n\"carrington54543jack@myorg\"\n\"carrington\"\n\"jack\"\n\"myorg\"\n\n\n\"emma.miller@gmaiL \"\n\"emma\"\n\"miller\"\n\"gmaiL\"\n\n\n\"brielle.ironwood@GMAIL \"\n\"brielle\"\n\"ironwood\"\n\"GMAIL\"\n\n\n\n\n\n\nHere we count the email domains, normalizing all domains to lowercase before grouping, since the raw data contains inconsistent capitalization. This ensures that variations of the same domain are counted together rather than treated as separate entries.\n\n\nShow the code\n# Unique email domain count\ndomain_count = (df.with_columns(pl.col(\"email_domain\").str.to_lowercase()).group_by(\"email_domain\").len().rename({\"len\": \"domain_count\"}).sort(\"domain_count\", descending=True))\ndomain_count\n\n\n\nshape: (3, 2)\n\n\n\nemail_domain\ndomain_count\n\n\nstr\nu32\n\n\n\n\n\"gmail\"\n707\n\n\n\"myorg\"\n286\n\n\n\"yahoo\"\n193",
+    "crumbs": [
+      "Full Stack",
+      "Unit 5: Star Wars Task 1"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_task1.html#results",
+    "href": "Full_Stack/unit5_task1.html#results",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Results",
+    "text": "Results\nthis is a more in-depth explanation of results. A classification report and feature importance graphs belong here. type your report here, you will likely want multiple code chunks and text intermingled",
+    "crumbs": [
+      "Full Stack",
+      "Unit 5: Star Wars Task 1"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/unit5_task1.html#conclusion",
+    "href": "Full_Stack/unit5_task1.html#conclusion",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "Conclusion",
+    "text": "Conclusion\nthis is where you will discuss the implication of the results, including any limitations of the analysis, and recommendations for actions/future work. It may feel repetitive to the executive summary, but it should be more detailed and include any additional insights you gained from the analysis. –&gt;\ntype your write-up and analysis here",
+    "crumbs": [
+      "Full Stack",
+      "Unit 5: Star Wars Task 1"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/project1.html",
+    "href": "Machine_Learning/project1.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Machine Learning",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/project3.html",
+    "href": "Machine_Learning/project3.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Machine Learning",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/unit4_task2.html",
+    "href": "Machine_Learning/unit4_task2.html",
+    "title": "Client Report -How good is it, really?",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport numpy as np\nfrom lets_plot import *\nfrom sklearn.model_selection import train_test_split\nfrom sklearn import metrics\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.inspection import permutation_importance\nfrom sklearn.metrics import confusion_matrix, classification_report\nimport pandas as pd\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using polars and the URL\ndata = 'dwellings_ml.txt'\ndwellings = pl.read_csv(data)",
+    "crumbs": [
+      "Machine Learning",
+      "Unit 4: Predictions Task 2"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/unit4_task2.html#question-1",
+    "href": "Machine_Learning/unit4_task2.html#question-1",
+    "title": "Client Report -How good is it, really?",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\n\nDescribe the quality of your classification model using 2-3 different evaluation metrics. You also need to explain how to define/interpret each of the evaluation metrics you use.\n\nHere I use 3 different tests to see how accurate and precise my model is. First we use the accuracy score, then I pull in a classification report which is able to read through both the precision, f1-score, and recall of the model. I also added in a confusion matrix because I thought it was intriguing to see how many of the predictions. The top left block shows us how many were true negatives, the top right shows false negatives, the bottom left shows false positives and the bottom right shows true positives. Here we’re able to see how many cases are incorrect.\n\n\nShow the code\n# Include and execute your code here\n# Don't forget, you need another import statement to import the desired ML model from sklearn\nfeature_names = [\n  'livearea','finbsmnt','basement','stories','nocars','numbdrm','numbaths','condition_AVG',\n  'quality_A','quality_B','quality_C','quality_D','quality_X',\n  'gartype_Att','gartype_Det','gartype_None','gartype_CP'\n]\nfeatures = dwellings.select(feature_names).to_numpy()\ntarget = dwellings.select('before1980').to_numpy().ravel()\nx_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.3, stratify=target)\nmodel = RandomForestClassifier()\nmodel.fit(x_train, y_train)\ny_pred = model.predict(x_test)\n\n\nacc = metrics.accuracy_score(y_test, y_pred)\nprint('Accuracy:', acc)\n\nprint('Classification report:')\nprint(classification_report(y_test, y_pred))\n\nprint('Confusion matrix:')\ncm = confusion_matrix(y_test, y_pred)\nprint(cm)\n\n\nAccuracy: 0.9215885947046843\nClassification report:\n              precision    recall  f1-score   support\n\n           0       0.89      0.90      0.90      2578\n           1       0.94      0.93      0.94      4296\n\n    accuracy                           0.92      6874\n   macro avg       0.92      0.92      0.92      6874\nweighted avg       0.92      0.92      0.92      6874\n\nConfusion matrix:\n[[2332  246]\n [ 293 4003]]",
+    "crumbs": [
+      "Machine Learning",
+      "Unit 4: Predictions Task 2"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/unit4_task2.html#question-2",
+    "href": "Machine_Learning/unit4_task2.html#question-2",
+    "title": "Client Report -How good is it, really?",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\n\nJustify your classification model by discussing the most important features selected by your model. This discussion should include a plot of permutation importance values for the most important features. Were there any features you thought would be importance but weren’t?\n\nI ran the permutation test and ploted the top 10 features. In the last task I guessed that the living area, finished basement, and condition of the house would be the most important features. While they were all in the top ten, I thought that the condition of the house would be more important than it was. I was surprised that the number of stories came out as number one.\n\n\nShow the code\n# Include and execute your code here\nr = permutation_importance(model, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\n\nimportances = pd.Series(r.importances_mean, index=feature_names)\ntop = importances.nlargest(10)\n\ndf_perm = pd.DataFrame({\n  'feature': top.index,\n  'importance': top.values,\n})\ndf_perm['feature'] = pd.Categorical(df_perm['feature'], categories=df_perm['feature'], ordered=True)\n\n(ggplot(df_perm, aes(x='feature', y='importance', fill='feature'))\n + geom_bar(stat='identity', fill = \"blue\")\n + labs(\n     title='Top 10 Permutation Importances',\n     x='Feature',\n     y='Mean accuracy decrease'\n   )\n)",
+    "crumbs": [
+      "Machine Learning",
+      "Unit 4: Predictions Task 2"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/unit4_task2.html#question-3",
+    "href": "Machine_Learning/unit4_task2.html#question-3",
+    "title": "Client Report -How good is it, really?",
+    "section": "QUESTION 3",
+    "text": "QUESTION 3\n\nFor the 3 most important features, explain their relationship to the target variable. Use a plot to illustrate the relationship. (3 plots minimum)\n\nHere I grab the top 3 features from the permutation test and plot them against the target variable. The top 3 features were number of stories, number of baths, and number of rooms. We can see that for all three features, the houses built before 1980 tend to have fewer stories, fewer baths, and fewer rooms than those built in 1980 or later.\n\n\nShow the code\n# Include and execute your code here\nr = permutation_importance(model, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\ntop_idx = r.importances_mean.argsort()[::-1][:4]\ntop_features = [feature_names[i] for i in top_idx]\n\ndf_q3 = dwellings.select(top_features + ['before1980']).to_pandas()\ndf_q3['before1980'] = df_q3['before1980'].map({0: '1980 or later', 1: 'before 1980'})\n(\n    ggplot(df_q3, aes(x='before1980', y=top_features[0], fill='before1980'))\n    + geom_boxplot()\n    + labs(title=f'Stories by build year group', x='Build year category', y = \"Stories\", fill='Build year category'))\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\n(ggplot(df_q3, aes(x='before1980', y=top_features[1], fill='before1980'))\n    + geom_boxplot()\n    + labs(title=f'Number of baths by build year group', x='Build year category', y=\"Number of baths\", fill='Build year category'))\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\n(ggplot(df_q3, aes(x='before1980', y=top_features[2], fill='before1980'))\n  + geom_boxplot()\n  + labs(title=f'Number of rooms by build year group', x='Build year category', y=\"Number of rooms\", fill='Build year category'))",
+    "crumbs": [
+      "Machine Learning",
+      "Unit 4: Predictions Task 2"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/project1.html",
+    "href": "Story_Telling/project1.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Story Telling",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/project3.html",
+    "href": "Story_Telling/project3.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Story Telling",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task2.html",
+    "href": "Story_Telling/unit3_task2.html",
+    "title": "Client Report - Baseball Database SQL Query",
+    "section": "",
+    "text": "Show the code\nimport polars as pl\nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nsqlite_file = 'lahmansbaseballdb.sqlite'\n# this file must be in the same location as your .qmd or .py file\ncon = sqlite3.connect(sqlite_file)",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 2"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task2.html#question-1",
+    "href": "Story_Telling/unit3_task2.html#question-1",
+    "title": "Client Report - Baseball Database SQL Query",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nWrite an SQL query that provides playerID, yearID, and batting average for players with at least 1 at bat that year. Sort the table from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.\nHere we can create a new column, using the already established columns for hits and at bats to calculate and save the batting average. But we’re not filtering out the players that had few at bats, we take all players who got up to the plate at least once and evaluate them, showing in our results high batting averages because of few at bats.\n\n\nShow the code\n# Include and execute your code here\n\n# The code below can serve as a template for all the rest of your queries. It is just missing the\n# SQL code. Put your SQL query in between the triple quotation marks to create the query. The records will be stored in 'results', which is a polars data frame\n\n\n\nq = \"\"\"\n    SELECT playerID, yearID,H,  AB, CAST (H AS FLOAT) / AB AS batting\n    FROM batting\n    WHERE AB &gt;= 1\n    ORDER BY batting DESC, playerID\n    LIMIT 5;\n    \"\"\"\nresults = pl.read_database(q, con)\nresults\n\n\n\nshape: (5, 5)\n\n\n\nplayerID\nyearID\nH\nAB\nbatting\n\n\nstr\ni64\ni64\ni64\nf64\n\n\n\n\n\"aberal01\"\n1957\n1\n1\n1.0\n\n\n\"abernte02\"\n1960\n1\n1\n1.0\n\n\n\"abramge01\"\n1923\n1\n1\n1.0\n\n\n\"acklefr01\"\n1964\n1\n1\n1.0\n\n\n\"alanirj01\"\n2019\n1\n1\n1.0",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 2"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task2.html#question-2",
+    "href": "Story_Telling/unit3_task2.html#question-2",
+    "title": "Client Report - Baseball Database SQL Query",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nUse the same query as above, but only include players with at least 10 at bats that year. Print the top 5 results.\nWe can use the same logic as the before table with this query, only this time we filter out those who have been up to bat less than ten times, This decreases our averages shown in the top five because they had more chances at bat.\n\n\nShow the code\n# Include and execute your code here\n\nq = \"\"\"\n    SELECT playerID, yearID, H,  AB, CAST (H AS FLOAT) / AB AS batting\n    FROM batting\n    WHERE AB &gt;= 10\n    ORDER BY batting DESC, playerID\n    LIMIT 5;\n    \"\"\"\nresults = pl.read_database(q, con)\nresults\n\n\n\nshape: (5, 5)\n\n\n\nplayerID\nyearID\nH\nAB\nbatting\n\n\nstr\ni64\ni64\ni64\nf64\n\n\n\n\n\"nymanny01\"\n1974\n9\n14\n0.642857\n\n\n\"carsoma01\"\n2013\n7\n11\n0.636364\n\n\n\"altizda01\"\n1910\n6\n10\n0.6\n\n\n\"johnsde01\"\n1975\n6\n10\n0.6\n\n\n\"silvech01\"\n1948\n8\n14\n0.571429",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 2"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/unit3_task2.html#question-3",
+    "href": "Story_Telling/unit3_task2.html#question-3",
+    "title": "Client Report - Baseball Database SQL Query",
+    "section": "QUESTION 3",
+    "text": "QUESTION 3\nNow modify the SQL query to calculate the batting average for players over their entire careers (all years combined). Only include players with at least 100 at bats over their entire career, and print the top 5 results.\nHere we use the same logic, but group our players together by playerID and sum their hits and at bats. Now we can see their career stats, and the five highest career players.\n\n\nShow the code\n# Include and execute your code here\nq = \"\"\"\n    SELECT playerID,  \n    SUM(H) AS total_hits,\n    SUM(AB) AS total_at_bat, \n    CAST (SUM(H) AS FLOAT) / SUM(AB) AS batting\n    FROM batting\n    GROUP BY playerID, yearID\n    HAVING SUM(AB) &gt;= 100\n    ORDER BY batting DESC, playerID\n    LIMIT 5;\n    \"\"\"\nresults = pl.read_database(q, con)\nresults\n\n\n\nshape: (5, 4)\n\n\n\nplayerID\ntotal_hits\ntotal_at_bat\nbatting\n\n\nstr\ni64\ni64\nf64\n\n\n\n\n\"meyerle01\"\n64\n130\n0.492308\n\n\n\"duffyhu01\"\n237\n539\n0.439703\n\n\n\"oneilti01\"\n225\n517\n0.435203\n\n\n\"mcveyca01\"\n66\n153\n0.431373\n\n\n\"barnero01\"\n138\n320\n0.43125",
+    "crumbs": [
+      "Story Telling",
+      "Unit 3: Baseball Task 2"
+    ]
   },
   {
     "objectID": "cleansing.html",
@@ -54,231 +938,18 @@
     ]
   },
   {
-    "objectID": "story_telling.html",
-    "href": "story_telling.html",
+    "objectID": "index.html",
+    "href": "index.html",
     "title": "about me",
     "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Story Telling"
-    ]
+    "text": "MarkDown Basics"
   },
   {
-    "objectID": "story_telling.html#title-2-header",
-    "href": "story_telling.html#title-2-header",
+    "objectID": "index.html#title-2-header",
+    "href": "index.html#title-2-header",
     "title": "about me",
     "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Story Telling"
-    ]
-  },
-  {
-    "objectID": "ml.html",
-    "href": "ml.html",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Machine Learning"
-    ]
-  },
-  {
-    "objectID": "ml.html#title-2-header",
-    "href": "ml.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Machine Learning"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/unit1_task1.html",
-    "href": "Cleansing_Exploration/unit1_task1.html",
-    "title": "Client Report - Exploring Names",
-    "section": "",
-    "text": "Show the code\nimport polars as pl\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pl.read_csv(\"https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed69e7f1/names_year_csv.csv\")",
-    "crumbs": [
-      "Data Exploration",
-      "Unit 1: Names Task 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/unit1_task1.html#question-1",
-    "href": "Cleansing_Exploration/unit1_task1.html#question-1",
-    "title": "Client Report - Exploring Names",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\nWhat was the earliest year that the name ‘Felisha’ was used?\nThe earliest year Felisha was used was 1964. It was used 20 times, 9 times in Texas alone. We can find this by filtering the name and sorting by the year.\n\n\nShow the code\n# Q1\nprint(df.filter(name = \"Felisha\").sort('year').head(1))",
-    "crumbs": [
-      "Data Exploration",
-      "Unit 1: Names Task 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/unit1_task1.html#question-2",
-    "href": "Cleansing_Exploration/unit1_task1.html#question-2",
-    "title": "Client Report - Exploring Names",
-    "section": "QUESTION 2",
-    "text": "QUESTION 2\nWhat year had the most babies named ‘David’? How many babies were named ‘David’ that year?\nThis data captures 114 years that the name David was used. It was used with the most frequency in the year 1955, when there were 86,389 people named David.\n\n\nShow the code\n# Q2\nprint(df.filter(name = \"David\").sort('Total', descending=True).head(1))",
-    "crumbs": [
-      "Data Exploration",
-      "Unit 1: Names Task 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/unit1_task1.html#question-3",
-    "href": "Cleansing_Exploration/unit1_task1.html#question-3",
-    "title": "Client Report - Exploring Names",
-    "section": "QUESTION 3",
-    "text": "QUESTION 3\nWhat year did your name hit its peak? How many babies were named your name in that year?\nMy name, Ella, hit it’s peak in 2010, being used 9,883 times.\n\n\nShow the code\n# Q3\nprint(df.filter(name = \"Ella\").sort(\"Total\", descending=True).head(1))",
-    "crumbs": [
-      "Data Exploration",
-      "Unit 1: Names Task 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/unit1_task1.html#question-4",
-    "href": "Cleansing_Exploration/unit1_task1.html#question-4",
-    "title": "Client Report - Exploring Names",
-    "section": "QUESTION 4",
-    "text": "QUESTION 4\nIn the most recent year, what was the most common female name in Utah?\nHere we see the most common female name in Utah in the year 2024 is Olivia. Here we are assuming the names Oliver, Liam, Henry, and William are all male names. This assumption leaves us with Olivia, which was used 215 times in the state of Utah in the year 2024.\n\n\nShow the code\n# Q5\ndfq4 = df.select (\n  pl.col ('name'),\n  pl.col(\"year\"),\n  pl.col(\"UT\"),\n)\ndfq4 = dfq4.sort(\"year\", \"UT\", descending = True)\nprint(dfq4.head())",
-    "crumbs": [
-      "Data Exploration",
-      "Unit 1: Names Task 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/unit2_task1.html",
-    "href": "Cleansing_Projects/unit2_task1.html",
-    "title": "Client Report - Flights: Creating New Columns",
-    "section": "",
-    "text": "Show the code\nimport polars as pl\nimport requests #new for reading in JSON\nimport io       #new for reading in JSON\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nurl = \"https://raw.githubusercontent.com/byuidatascience/data4missing/master/data-raw/flights_missing/flights_missing.json\"\nresponse = requests.get(url)\ndf = pl.read_json(io.BytesIO(response.content))",
-    "crumbs": [
-      "Data Cleansing",
-      "Unit 2: Flights Task 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/unit2_task1.html#question-1",
-    "href": "Cleansing_Projects/unit2_task1.html#question-1",
-    "title": "Client Report - Flights: Creating New Columns",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\n\nCreate a new ‘season’ column. Define ‘season’ as:\n\nWinter for January, Febuary (note the mispelling), March\nSpring for April, May, June\nSummer for July, August, September\nFall for October, November, December\nAll other rows can be assigned a value of ‘Unknown’\n\n\nNo discussion needed for this question\n\n\nShow the code\n# Include and execute your code here\n\ndf = df.with_columns(season = pl.when(pl.col(\"month\").is_in([\"January\", \"Febuary\", \"March\"])).then(pl.lit(\"Winter\")).when(pl.col(\"month\").is_in([\"April\", \"May\", \"June\"])).then(pl.lit(\"Spring\")).when(pl.col(\"month\").is_in([\"July\", \"August\", \"September\"])).then(pl.lit(\"Summer\")).when(pl.col(\"month\").is_in([\"October\", \"November\", \"December\"])).then(pl.lit(\"Fall\")).otherwise(pl.lit(\"Unknown\")))\nprint(df.select(\"month\", \"season\").head(5))",
-    "crumbs": [
-      "Data Cleansing",
-      "Unit 2: Flights Task 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/unit2_task1.html#question-2",
-    "href": "Cleansing_Projects/unit2_task1.html#question-2",
-    "title": "Client Report - Flights: Creating New Columns",
-    "section": "QUESTION 2",
-    "text": "QUESTION 2\n\nDivide all the columns by 1000 whose name starts with num_of. Be sure to first filter out rows that contain problematic values for the columns like -999 or 1500+.\n\nNo discussion needed for this question\n\n\nShow the code\n# Include and execute your code here\n\ndf = (df.with_columns(pl.selectors.starts_with(\"num_of\").cast(pl.Int64, strict=False)).filter(~pl.any_horizontal(pl.selectors.starts_with(\"num_of\") == -999)).with_columns(pl.selectors.starts_with(\"num_of\") / 1000))\nprint(df.select(\"month\", \"num_of_delays_weather\", \"num_of_delays_late_aircraft\", \"num_of_delays_nas\").head(5))",
-    "crumbs": [
-      "Data Cleansing",
-      "Unit 2: Flights Task 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/unit2_task1.html#question-3",
-    "href": "Cleansing_Projects/unit2_task1.html#question-3",
-    "title": "Client Report - Flights: Creating New Columns",
-    "section": "QUESTION 3",
-    "text": "QUESTION 3\n\nAccording to the BTS website, the “Weather” category only accounts for severe weather delays. Mild weather delays are not counted in the “Weather” category, but are actually included in both the “nas” and “late_aircraft” categories. Using the columns you modified in the bullet above, your job is to create a new column that calculates the total number of flights (in 1,000’s) delayed by weather (both severe and mild). Show your work by printing the first 5 rows of the dataset. Use these three rules for your calculations:\n\n100% of delayed flights in the Weather category are due to weather\n\n30% of all delayed flights in the “late_aircraft” category are due to weather\n\nFrom April through August, 40% of delayed flights in the NAS category are due to weather. The rest of the months, the proportion rises to 65%\n\n\nNo discussion needed for this question\n\n\nShow the code\n# Include and execute your code here\n#df = df.with_columns(weather = (pl.col(\"num_of_delays_weather\") + (pl.col(\"num_of_delays_late_aircraft\") * .3) + pl.when(pl.col(\"month\").is_in([\"April\", \"May\", \"June\", \"July\", \"August\"])).then(pl.col(\"num_of_delays_nas\") * .4).otherwise(pl.col(\"num_of_delays_nas\") * .65) ))\ndf = df.with_columns(\n    total_weather_delays = (\n        pl.col(\"num_of_delays_weather\")\n        + (pl.col(\"num_of_delays_late_aircraft\") * 0.30)\n        + pl.when(pl.col(\"month\").is_in([\"April\", \"May\", \"June\", \"July\", \"August\"]))\n            .then(pl.col(\"num_of_delays_nas\") * 0.40)\n            .otherwise(pl.col(\"num_of_delays_nas\")* 0.65)\n    )\n)\nprint(df.select(\"month\", \"num_of_delays_weather\", \"num_of_delays_late_aircraft\", \"num_of_delays_nas\", \"total_weather_delays\").head(5))",
-    "crumbs": [
-      "Data Cleansing",
-      "Unit 2: Flights Task 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/unit2_task1.html#question-4",
-    "href": "Cleansing_Projects/unit2_task1.html#question-4",
-    "title": "Client Report - Flights: Creating New Columns",
-    "section": "QUESTION 4",
-    "text": "QUESTION 4\n\nUsing the new weather variable calculated above, create a boxplot showing the distribution of flights delayed by weather for each season. Describe what you learn from this graph.\n\nHere the graph shows us the results we were mainly expecting: in the winter there are more flight delays than any other season. We find that the spread of “Unknown” seasons is very wide, which checks out because it could be they delay of any given season reported here.\n\n\nShow the code\n# Include and execute your code here\n(ggplot(df, aes(x=\"season\", y=\"total_weather_delays\", color = \"season\"))\n    + geom_boxplot()\n    + labs(title = \"Quantity of Weather Delays vs Season\", x = \"Season\", y = \"Quantity of Weather Delays\")\n)",
-    "crumbs": [
-      "Data Cleansing",
-      "Unit 2: Flights Task 1"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/unit4_task1.html",
-    "href": "Machine_Learning/unit4_task1.html",
-    "title": "Client Report - Can You Predict That?",
-    "section": "",
-    "text": "Show the code\nimport polars as pl\nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.model_selection import train_test_split\nfrom sklearn import metrics\nfrom sklearn.ensemble import RandomForestClassifier\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using polars and the local dataset file\ndata_path = 'dwellings_ml.txt'\ndwellings = pl.read_csv(data_path)",
-    "crumbs": [
-      "Machine Learning",
-      "Unit 4: Predictions Task 1"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/unit4_task1.html#question",
-    "href": "Machine_Learning/unit4_task1.html#question",
-    "title": "Client Report - Can You Predict That?",
-    "section": "QUESTION",
-    "text": "QUESTION\n\nTake time to get to know your data. Based on some initial exploration, identify 3 variables in the dataset you think will have strong predictive ability for determining if a house was built before 1980. Explain/justify the reasoning behind your guesses (for example with plots).\n\nThe three variables I think would be helpful is the living area, finished basement, and condition of the house. These don’t have a huge correlation, but I think all together they could be helpful.\n\n\nShow the code\n# Optional: code you used to get to know your data\n\nprint('Dataset shape:', dwellings.shape)\nfor c in dwellings.columns:\n    print(c)\nprint(dwellings.select(pl.col(\"yrbuilt\", \"stories\", \"before1980\")))\n\nplot_data = dwellings.select(['yrbuilt', 'livearea', 'finbsmnt', 'condition_AVG']).to_pandas()\n\np1 = (\n    ggplot(plot_data, aes(x='yrbuilt', y='livearea'))\n    + geom_point(alpha=0.2, size=2)\n    + labs( title = 'Year Built vs Living Area', x = 'Year Built', y = 'Living Area')\n    + scale_x_continuous(format='{d}')\n)\n\np2 = (\n    ggplot(plot_data, aes(x='yrbuilt', y='finbsmnt'))\n    + geom_point(alpha=0.2, size=2)\n    + labs( title = 'Year Built vs Finished Basement', x = 'Year Built', y = 'Finished Basement')\n    + scale_x_continuous(format='{d}')\n)\n\np3 = (\n    ggplot(plot_data, aes(x='yrbuilt'))\n    + geom_bar()\n    + labs( title = 'Count of Houses by Year Built', x = 'Year Built', y = 'Count')\n    + scale_x_continuous(format='{d}')\n)\n\nplot_grid = gggrid([p1, p2, p3], ncol=1)\nplot_grid\n\n\n\nBuild a classification model labeling houses as being built “before 1980” or “during or after 1980”. Your goal is to reach or exceed 90% accuracy. Report your final model choice and any other model parameters you may have tweaked (train-test split ratio, tuning parameters, etc).\n\nHere we’re able to use RandomForestClassifier to predict whether a house was built before 1980. I used few features at first and then increased the number of features to see if it would increase the accuracy – it did, by about 3%. I tweaked the train-test ratio to 70-30 and that seemed to work well, but I didn’t do any tuning of the model parameters. I think that could be a next step to try to increase the accuracy even more.\n\n\nShow the code\n# Include and execute your code here\n# Don't forget, you need another import statement to import the desired ML model from sklearn\nfeatures = dwellings.select(['livearea','finbsmnt','basement','stories','nocars','numbdrm','numbaths','condition_AVG',\n    'quality_A','quality_B','quality_C','quality_D','quality_X',\n    'gartype_Att','gartype_Det','gartype_None','gartype_CP']).to_numpy()\ntarget = dwellings.select('before1980').to_numpy().ravel()\n\nx_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.3, stratify=target)\n\nmodel = RandomForestClassifier()\nmodel.fit(x_train, y_train)\n\ny_pred = model.predict(x_test)\n\nacc = metrics.accuracy_score(y_test, y_pred)\nprint('accuracy:', acc)",
-    "crumbs": [
-      "Machine Learning",
-      "Unit 4: Predictions Task 1"
-    ]
-  },
-  {
-    "objectID": "Story_Telling/unit5_final_report.html",
-    "href": "Story_Telling/unit5_final_report.html",
-    "title": "Client Report - Star Wars for Dummies",
-    "section": "",
-    "text": "Show the code\nimport polars as pl \nimport numpy as np\nfrom lets_plot import *\nimport polars.selectors as cs\nimport pandas as pd\n# imports for ML\nfrom sklearn.model_selection import train_test_split\nfrom sklearn import metrics\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import classification_report\n\nLetsPlot.setup_html(isolated_frame=True)\n\ndata_url = \"https://byuidatascience.github.io/DS250-Course-Polars/Data/StarWars_with_emails.csv\"\nShow the code\n# Read in and tidy up the first row\na = pl.Series(pl.read_csv(data_url, skip_rows = 10, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n# Note the non-aschii character in the column \"Do you consider yourself to be a fan of the Expanded Universe\". (column AF if you open it in Excel). \n\n# BTW: Detecting what it is and where can be difficult\n\n# Lossy means that invalid utf8 values are replaced with � characters. When using other encodings than utf8 or utf8-lossy, the input is first decoded in memory with python. Defaults to utf8...ignore_errors = True does not replace the non-utf8 character with a blank space like you would hope\n\na[2] = \"seen_any\" #simply overwrite the value at index 2\n\n# Rather than changing each column header manually,\n# here we use regex to apply changes more efficiently\na = (\n  a.str.replace(r\".+seen.+\", \"seen_\")\n   .str.replace(r\".+rank.+\", \"rank_\")\n   .str.replace(r\"(.+favorably.+)\", \"fav_\")\n   .fill_null(strategy = \"forward\")\n\n   .str.replace(\"\\uFFFD+\", \"\") #this gets rid of the question marks in a diamond characters \n   .str.strip_chars()\n   .str.to_lowercase()\n   .str.replace_all(\" \", \"_\")\n   .str.replace(r\"location(.+)\", \"location\")\n\n)\na[3] = \"star_wars_fan\"\na[30] = \"who_shot_first\"\na[31] = \"know_expanded_universe\"\na[32] = \"expanded_universe_fan\"\na[33] = \"star_trek_fan\"\nShow the code\nb = pl.Series(pl.read_csv(data_url, skip_rows = 11, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n\nb = (\n  b.str.replace(r\"Star Wars: (Episode \\w+) .+\", \"${1}\")\n   .str.replace(\"Response\", \"\")\n   .str.replace_all(\" \", \"_\")\n   .fill_null(\"\")\n   .str.strip_chars()\n)\nShow the code\n#Now combine the two series, each of which contains part of the desired column header\nnew_names = (a + b).to_list()\n\n# Read in the data, skipping over the column header rows\n# and use 'new_names' as the column headers\ndf = pl.read_csv(data_url, skip_rows=12, has_header=False, new_columns = new_names )",
-    "crumbs": [
-      "Story Telling",
-      "Unit 5: Star Wars Final Report"
-    ]
-  },
-  {
-    "objectID": "Story_Telling/unit5_final_report.html#executive-summary",
-    "href": "Story_Telling/unit5_final_report.html#executive-summary",
-    "title": "Client Report - Star Wars for Dummies",
-    "section": "Executive Summary",
-    "text": "Executive Summary\n\nThis report uses the FiveThirtyEight Star Wars survey to predict whether a respondent’s household income is above $50,000 using a Random Forest Classifier.\nThe dataset includes 835 respondents who have seen at least one Star Wars film. Survey responses were cleaned and encoded for use in the model.\nThe model achieved approximately 65% accuracy on the test set.\nThe stretch was completed: two charts from the article are recreated and validate the dataset.",
-    "crumbs": [
-      "Story Telling",
-      "Unit 5: Star Wars Final Report"
-    ]
-  },
-  {
-    "objectID": "Story_Telling/unit5_final_report.html#methods",
-    "href": "Story_Telling/unit5_final_report.html#methods",
-    "title": "Client Report - Star Wars for Dummies",
-    "section": "Methods",
-    "text": "Methods\nRegex is used to parse the email column and extract each respondent’s first name, last name, and email domain into separate columns. Each pattern uses markers in the email — such as the start of a string and the @ symbol — to isolate the relevant text.\n\n\nShow the code\n# Extract first name, last name, and email domain from the email column\ndf = df.with_columns([\n    pl.col(\"email\").str.strip_chars().str.extract(r\"^([a-zA-Z]+)\", 1).alias(\"first_name\"),\n    pl.col(\"email\").str.strip_chars().str.extract(r\"([a-zA-Z]+)@\", 1).alias(\"last_name\"),\n    pl.col(\"email\").str.strip_chars().str.extract(r\"@([a-zA-Z0-9]+)\", 1).alias(\"email_domain\"),\n])\ndf.select([\"email\", \"first_name\", \"last_name\", \"email_domain\"]).head(5)\n\n\nHere we count the email domains, normalizing all domains to lowercase before grouping, since the raw data contains inconsistent capitalization. This ensures that variations of the same domain are counted together rather than treated as separate entries.\n\n\nShow the code\n# Unique email domain count\ndomain_count = (df.with_columns(pl.col(\"email_domain\").str.to_lowercase()).group_by(\"email_domain\").len().sort(\"len\", descending=True))\ndomain_count\n\n\nThe dataset is filtered to respondents who have seen at least one Star Wars film. Rather than relying on the self-reported seen_any column, we check the six individual film columns directly — if any are non-null, the respondent has seen at least one film.\n\n\nShow the code\n# Respondents who have seen at least one Star Wars film\nseen_cols = [c for c in df.columns if c.startswith(\"seen_\") and c != \"seen_any\"]\ndf_seen = df.filter(\n    pl.any_horizontal([pl.col(c).is_not_null() for c in seen_cols])\n)\n\nprint(df_seen.head(5))\n\n\nHere we pull apart the answers that are numbers yet currently formatted as strings and turn them into numbers. For range values, the lower number is used. The categories must be numeric for machine learning, so each category is mapped to an integer. This preserves the ordering of each variable and keeps the conversion simple and consistent. Rows where no income was reported are removed. For other missing values, we filled it with a 0 before passing to the model. Now instead of dropping important rows, we can just drop it from that feature. Now we can use ‘df_for_ml’ as our machine learning ready data set!\n\n\nShow the code\n# Age\nage_map = {\"18-29\": 18, \"30-44\": 30, \"45-60\": 45, \"&gt; 60\": 60}\n\ndf_for_ml = (\n    df_seen\n    .with_columns(pl.col(\"age\").replace(age_map).cast(pl.Int32).alias(\"age_num\"))\n    .drop(\"age\")\n)\n# Education\neducation_ = {\n    \"Less than high school degree\": 1,\n    \"High school degree\": 2,\n    \"Some college or Associate degree\": 3,\n    \"Bachelor degree\": 4,\n    \"Graduate degree\": 5,\n}\n\ndf_for_ml = (\n    df_for_ml\n    .with_columns(pl.col(\"education\").replace(education_).cast(pl.Int32).alias(\"education_num\"))\n    .drop(\"education\")\n)\n# Income\nincome = {\n    \"$0 - $24,999\": 0,\n    \"$25,000 - $49,999\": 25000,\n    \"$50,000 - $99,999\": 50000,\n    \"$100,000 - $149,999\": 100000,\n    \"$150,000+\": 150000,\n}\n\ndf_for_ml = (\n    df_for_ml\n    .with_columns(pl.col(\"household_income\").replace(income).cast(pl.Int64).alias(\"income_num\"))\n    .drop(\"household_income\")\n)\n# Favorability\nfav = {\n    \"Very favorably\": 5,\n    \"Somewhat favorably\": 4,\n    \"Neither favorably nor unfavorably (neutral)\": 3,\n    \"Somewhat unfavorably\": 2,\n    \"Very unfavorably\": 1,\n    \"Unfamiliar (N/A)\": 0,\n}\n\nfav_columns = [c for c in df.columns if c.startswith(\"fav_\")]\n\ndf_for_ml = (\n    df_for_ml\n    .with_columns([pl.col(c).replace(fav).cast(pl.Int32) for c in fav_columns])\n)\n\n# Drop identifier columns\ndf_for_ml = df_for_ml.drop([\"respondentid\", \"first_name\", \"last_name\", \"email\"])\n\n# Household income \ndf_for_ml = df_for_ml.with_columns(\n    (pl.col(\"income_num\") &gt;= 50000).cast(pl.Int8).alias(\"high_income\")\n)\n\n# show head of complete data set \ndf_for_ml.select([\"age_num\", \"education_num\", \"income_num\"] + fav_columns).head(5)\n\n\nAny remaining string inputs that couldn’t be mapped to an integer are one-hot encoded, converting them to binary columns. Here we’re able to create our Machine Learning model to predict if a respondent’s household income is over $50,000. We remove the rows where the respondents didn’t record their income.Then we choose our features and target. We then split the data 70/30 and created our model. The model’s accuracy is shown below.\n\n\nShow the code\n# One-hot encode remaining strings\nstr_cols = df_for_ml.select(cs.string()).columns\ndf_for_ml = df_for_ml.to_dummies(columns=str_cols)\n\n# Remove rows where income was not reported\ndf_model = df_for_ml.filter(pl.col(\"high_income\").is_not_null())\n\n# Set features\nfeature_cols = [c for c in df_model.columns if c not in [\"high_income\", \"income_num\"]]\n\nfeatures = df_model.select(feature_cols).fill_null(0).to_numpy()\ntarget = df_model.select(\"high_income\").to_numpy().ravel()\n\nx_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.3)\n\n# Create model\nmodel = RandomForestClassifier()\nmodel.fit(x_train, y_train)\n\ny_pred = model.predict(x_test)\n\nacc = metrics.accuracy_score(y_test, y_pred)\nprint('accuracy:', acc)",
-    "crumbs": [
-      "Story Telling",
-      "Unit 5: Star Wars Final Report"
-    ]
-  },
-  {
-    "objectID": "Story_Telling/unit5_final_report.html#results",
-    "href": "Story_Telling/unit5_final_report.html#results",
-    "title": "Client Report - Star Wars for Dummies",
-    "section": "Results",
-    "text": "Results\nHere is the shape of the table for all the respondents who have seen at least one film, adding up to a total of 835.\n\n\nShow the code\n# Shape of table for respondents who have seen at least one Star Wars film\nprint(df_seen.shape)\n\n\nThe model reached 65% accuracy on the test set. Looking at the classification report, precision and recall are stronger for the under $50k group than the over $50k group, which makes sense because higher-income respondents aren’t as represented in the data.\n\n\nShow the code\nprint(classification_report(y_test, y_pred, target_names=[\"&lt; $50k\", \"&gt;= $50k\"]))\n\n\nTo validate our dataset, we recreated two charts from the original FiveThirtyEight article. The distributions line up closely, confirming the data is accurate.\n\n\nShow the code\n# stretch — Chart 1: Which Star Wars films have you seen?\nseen_film_cols = [c for c in df.columns if c.startswith(\"seen_\") and c != \"seen_any\"]\nn_seen = len(df_seen)\n\nfilm_name_map = {\n    \"seen_Episode_I\":   \"The Phantom Menace\",\n    \"seen_Episode_II\":  \"Attack of the Clones\",\n    \"seen_Episode_III\": \"Revenge of the Sith\",\n    \"seen_Episode_IV\":  \"A New Hope\",\n    \"seen_Episode_V\":   \"The Empire Strikes Back\",\n    \"seen_Episode_VI\":  \"Return of the Jedi\",\n}\n\nepisode_order = [\n    \"The Phantom Menace\",\n    \"Attack of the Clones\",\n    \"Revenge of the Sith\",\n    \"A New Hope\",\n    \"The Empire Strikes Back\",\n    \"Return of the Jedi\",\n]\n\nchart1 = pl.DataFrame([\n    {\"film\": film_name_map[c],\n     \"pct\": round(df_seen[c].is_not_null().sum() / n_seen * 100)}\n    for c in seen_film_cols if c in film_name_map\n])\n\n# coord_flip reverses order, so feed the list bottom-to-top\nfilm_order = list(reversed(episode_order))\n\n(ggplot(chart1, aes(x=\"film\", y=\"pct\"))\n    + geom_bar(stat=\"identity\", fill=\"#008fd5\", width=0.7)\n    + geom_text(aes(label=\"pct\"), nudge_y=3, format=\"{d}%\", size=7, color=\"#008fd5\")\n    + coord_flip()\n    + scale_x_discrete(limits=film_order)\n    + scale_y_continuous(limits=[0, 100])\n    + labs(\n        title=\"Which 'Star Wars' Movies Have You Seen?\",\n        subtitle=\"Of 835 respondents who have seen any Star Wars film\",\n        x=\"\", y=\"\")\n    + theme(\n        panel_grid_major_y=element_blank(),\n        panel_grid_minor=element_blank(),\n        axis_text_y=element_text(hjust=1))\n)\n\n\n\n\nShow the code\n# stretch — Chart 2 (article's Chart 5): Who Shot First?\nshot_counts = (\n    df_seen\n    .filter(pl.col(\"who_shot_first\").is_not_null())\n    .group_by(\"who_shot_first\")\n    .len()\n    .rename({\"len\": \"count\"})\n    .with_columns(\n        (pl.col(\"count\") / pl.col(\"count\").sum() * 100).round().alias(\"pct\")\n    )\n)\n\nn_answered = shot_counts[\"count\"].sum()\n\n# Order: Han on top, then Greedo, then \"I don't understand...\"\nshot_order = [\"I don't understand this question\", \"Greedo\", \"Han\"]\n\n(ggplot(shot_counts, aes(x=\"who_shot_first\", y=\"pct\"))\n    + geom_bar(stat=\"identity\", fill=\"#008fd5\", width=0.7)\n    + geom_text(aes(label=\"pct\"), nudge_y=2, format=\"{d}%\", size=7, color=\"#008fd5\")\n    + coord_flip()\n    + scale_x_discrete(limits=shot_order)\n    + scale_y_continuous(limits=[0, 60])\n    + labs(\n        title=\"Who Shot First?\",\n        subtitle=f\"According to {n_answered} respondents\",\n        x=\"\", y=\"\")\n    + theme(\n        panel_grid_major_y=element_blank(),\n        panel_grid_minor=element_blank(),\n        axis_text_y=element_text(hjust=1))\n)",
-    "crumbs": [
-      "Story Telling",
-      "Unit 5: Star Wars Final Report"
-    ]
-  },
-  {
-    "objectID": "Story_Telling/unit5_final_report.html#conclusion",
-    "href": "Story_Telling/unit5_final_report.html#conclusion",
-    "title": "Client Report - Star Wars for Dummies",
-    "section": "Conclusion",
-    "text": "Conclusion\nThe model reached around 65% accuracy predicting whether a Star Wars fan earns over $50,000. The biggest limitation is that this is self-reported data, so people may not answer income questions accurately or at all. Going forward, it would be interesting to see if adding more demographic features or trying a different model type could push accuracy higher. The Star Wars data is fun to work with but probably isn’t the most reliable dataset for income prediction, but it is a good proof of concept that survey data can be used for this kind of prediction.",
-    "crumbs": [
-      "Story Telling",
-      "Unit 5: Star Wars Final Report"
-    ]
+    "text": "MarkDown Basics"
   },
   {
     "objectID": "resume.html",

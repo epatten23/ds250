@@ -1,6 +1,9 @@
-project: 
+project:
   type: website
   output-dir: docs
+  render:
+    - "**/*.qmd"
+    - "!mywork/**"
 
 website:
   title: "Your_Name - Data Science Portfolio"
@@ -135,6 +138,9 @@ website:
         - text: "Unit 4: Predictions Task 1"
           file: Machine_Learning/unit4_task1.qmd
         - text: "---"
+        - text: "Unit 4: Predictions Task 2"
+          file: Machine_Learning/unit4_task2.qmd
+        - text: "---"
         - text: "Unit 4: Predictions Task 3"
           file: Machine_Learning/unit4_task3.qmd
         - text: "---"
@@ -151,8 +157,11 @@ website:
         - text: "Project 2"
           file: Full_Stack/project2.qmd
         - text: "---"
-        - text: "Unit 5: Star Wars Final Report"
-          file: Full_Stack/unit5_final_report.qmd
+        - text: "Unit 5: Star Wars Task 1"
+          file: Full_Stack/unit5_task1.qmd
+        - text: "---"
+        - text: "Unit 5: Star Wars Task 2"
+          file: Full_Stack/unit5_task2.qmd
         - text: "---"
     - title: "Competition"
       style: "docked"
