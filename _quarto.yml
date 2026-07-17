@@ -51,15 +51,6 @@ website:
         - text: "Data Cleansing"
           file: cleansing.qmd
         - text: "---"
-        - text: "Project 1"
-          file: Cleansing/project1.qmd
-        - text: "---"
-        - text: "Project 2"
-          file: Cleansing/project2.qmd
-        - text: "---"
-        - text: "Project 3"
-          file: Cleansing/project3.qmd
-        - text: "---"
         - text: "Unit 1: Names Task 1"
           file: Cleansing/unit1_task1.qmd
         - text: "---"
@@ -75,15 +66,6 @@ website:
       contents:
         - text: "Data Exploration"
           file: exploration.qmd
-        - text: "---"
-        - text: "Project 1"
-          file: Exploration/project1.qmd
-        - text: "---"
-        - text: "Project 2"
-          file: Exploration/project2.qmd
-        - text: "---"
-        - text: "Project 3"
-          file: Exploration/project3.qmd
         - text: "---"
         - text: "Unit 2: Flights Task 1"
           file: Exploration/unit2_task1.qmd
@@ -101,15 +83,6 @@ website:
         - text: "Story Telling"
           file: story_telling.qmd
         - text: "---"
-        - text: "Project 1"
-          file: Story_Telling/project1.qmd
-        - text: "---"
-        - text: "Project 2"
-          file: Story_Telling/project2.qmd
-        - text: "---"
-        - text: "Project 3"
-          file: Story_Telling/project3.qmd
-        - text: "---"
         - text: "Unit 3: Baseball Task 1"
           file: Story_Telling/unit3_task1.qmd
         - text: "---"
@@ -126,15 +99,6 @@ website:
         - text: "Machine Learning"
           file: ml.qmd
         - text: "---"
-        - text: "Project 1"
-          file: Machine_Learning/project1.qmd
-        - text: "---"
-        - text: "Project 2"
-          file: Machine_Learning/project2.qmd
-        - text: "---"
-        - text: "Project 3"
-          file: Machine_Learning/project3.qmd
-        - text: "---"
         - text: "Unit 4: Predictions Task 1"
           file: Machine_Learning/unit4_task1.qmd
         - text: "---"
@@ -150,12 +114,6 @@ website:
       contents:
         - text: "Full Stack"
           file: full_stack.qmd
-        - text: "---"
-        - text: "Project 1"
-          file: Full_Stack/project1.qmd
-        - text: "---"
-        - text: "Project 2"
-          file: Full_Stack/project2.qmd
         - text: "---"
         - text: "Unit 5: Star Wars Task 1"
           file: Full_Stack/unit5_task1.qmd

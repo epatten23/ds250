@@ -4322,27 +4322,6 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
         <li class="px-0"><hr class="sidebar-divider hi "></li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Story_Telling/project1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Project 1</span></a>
-  </div>
-</li>
-        <li class="px-0"><hr class="sidebar-divider hi "></li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../Story_Telling/project2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Project 2</span></a>
-  </div>
-</li>
-        <li class="px-0"><hr class="sidebar-divider hi "></li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../Story_Telling/project3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Project 3</span></a>
-  </div>
-</li>
-        <li class="px-0"><hr class="sidebar-divider hi "></li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../Story_Telling/unit3_task1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Unit 3: Baseball Task 1</span></a>
   </div>
@@ -4385,7 +4364,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#question-3" id="toc-question-3">QUESTION 3</a></li>
   </ul>
 </nav>
-<div id="0e4344ce" class="cell" data-execution_count="1">
+<div id="14966110" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -4396,7 +4375,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="fcc567d5" class="cell" data-execution_count="2">
+<div id="c21a9cbf" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html</span></span>
@@ -4411,7 +4390,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <h2 class="anchored" data-anchor-id="question-1">QUESTION 1</h2>
 <p><strong>Write an SQL query that provides playerID, yearID, and batting average for players with at least 1 at bat that year. Sort the table from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.</strong></p>
 <p>Here we can create a new column, using the already established columns for hits and at bats to calculate and save the batting average. But we’re not filtering out the players that had few at bats, we take all players who got up to the plate at least once and evaluate them, showing in our results high batting averages because of few at bats.</p>
-<div id="999f058f" class="cell" data-execution_count="3">
+<div id="c2c05ee6" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
@@ -4503,7 +4482,7 @@ white-space: pre-wrap;
 <h2 class="anchored" data-anchor-id="question-2">QUESTION 2</h2>
 <p><strong>Use the same query as above, but only include players with at least 10 at bats that year. Print the top 5 results.</strong></p>
 <p>We can use the same logic as the before table with this query, only this time we filter out those who have been up to bat less than ten times, This decreases our averages shown in the top five because they had more chances at bat.</p>
-<div id="7dfd5c83" class="cell" data-execution_count="4">
+<div id="479b4441" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
@@ -4590,7 +4569,7 @@ white-space: pre-wrap;
 <h2 class="anchored" data-anchor-id="question-3">QUESTION 3</h2>
 <p><strong>Now modify the SQL query to calculate the batting average for players over their entire careers (all years combined). Only include players with at least 100 at bats over their entire career, and print the top 5 results.</strong></p>
 <p>Here we use the same logic, but group our players together by playerID and sum their hits and at bats. Now we can see their career stats, and the five highest career players.</p>
-<div id="c5f2f4df" class="cell" data-execution_count="5">
+<div id="e0e6278b" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
