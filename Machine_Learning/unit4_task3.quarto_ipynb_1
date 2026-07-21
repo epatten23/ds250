@@ -1,0 +1,187 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report - Show me!\"\n",
+        "subtitle: \"Unit 4 Task 3\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "d233c0c0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl\n",
+        "import numpy as np\n",
+        "from lets_plot import *\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn import metrics\n",
+        "# add the additional libraries you need to import for ML here\n",
+        "import pandas as pd\n",
+        "from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier\n",
+        "from sklearn.linear_model import LogisticRegression\n",
+        "from sklearn.inspection import permutation_importance\n",
+        "from sklearn.metrics import classification_report\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)"
+      ],
+      "id": "24e1c386",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# import your data here using polars and the URL\n",
+        "data_path = 'dwellings_ml.txt'\n",
+        "dwellings = pl.read_csv(data_path)\n",
+        "\n",
+        "# Feature names list\n",
+        "feature_names = [\n",
+        "  'livearea','finbsmnt','basement','stories','nocars','numbdrm','numbaths','condition_AVG',\n",
+        "  'quality_A','quality_B','quality_C','quality_D','quality_X',\n",
+        "  'gartype_Att','gartype_Det','gartype_None','gartype_CP'\n",
+        "]\n",
+        "\n",
+        "# Prepare features and target (same as Task 1)\n",
+        "features = dwellings.select(feature_names).to_numpy()\n",
+        "target = dwellings.select('before1980').to_numpy().ravel()\n",
+        "\n",
+        "x_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.3, stratify=target)"
+      ],
+      "id": "4b93915c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 1\n",
+        "\n",
+        "1. __Repeat the classification exercise using 2 different algorithms/models. Explain the differences between the 3 models__ (your original one, and the 2 new ones for this task).\n",
+        "\n",
+        "1 Random Forest Classifier (original): Builds different decision trees and combines their answers. This model handles messy data well and doesn't tend to overfit.\n",
+        "\n",
+        "2 Logistic Regression: A simpler model that draws a straight line to separate the two groups. It's easier to understand but can struggle when data has complex patterns.\n",
+        "\n",
+        "3 Gradient Boosting Classifier: Builds trees one at a time and each new tree fixes the mistakes of the previous one. It's usually very accurate but takes longer to train."
+      ],
+      "id": "9e9b94e1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "# Model 1: Old Random Forest Classifier\n",
+        "rfmodel = RandomForestClassifier(random_state=42)\n",
+        "rfmodel.fit(x_train, y_train)\n",
+        "rf_pred = rfmodel.predict(x_test)\n",
+        "rf_acc = metrics.accuracy_score(y_test, rf_pred)\n",
+        "\n",
+        "# Model 2: Logistic Regression\n",
+        "lrmodel = LogisticRegression(max_iter=1000, random_state=42)\n",
+        "lrmodel.fit(x_train, y_train)\n",
+        "lr_pred = lrmodel.predict(x_test)\n",
+        "lr_acc = metrics.accuracy_score(y_test, lr_pred)\n",
+        "\n",
+        "# Model 3: Gradient Boosting Classifier\n",
+        "gb_model = GradientBoostingClassifier(random_state=42, n_estimators=100)\n",
+        "gb_model.fit(x_train, y_train)\n",
+        "gb_pred = gb_model.predict(x_test)\n",
+        "gb_acc = metrics.accuracy_score(y_test, gb_pred)\n",
+        "\n",
+        "print(\"Accuracy of the three different models:\")\n",
+        "print(f\"Random Forest:\", rf_acc)\n",
+        "print(f\"Logistic Regression\", lr_acc)\n",
+        "print(f\"Gradient Boosting:\", gb_acc)"
+      ],
+      "id": "42305d2d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 2\n",
+        "\n",
+        "1. __For each model (your original one, and the 2 new ones for this task), display the classification report and the permutation importances for the most important features.  Discuss which model you would recommend to the Client and why.__\n",
+        "\n",
+        "All three models performed well, but the Random Forest and Gradient Boosting models were stronger than Logistic Regression. Across all three models, features like living area and number of stories consistently showed up as the most important. Ultimately, I would recommend the Gradient Boosting Classifier to the client since it had the best overall scores in the classification report, meaning it made the fewest mistakes when predicting whether a home was built before 1980."
+      ],
+      "id": "2566d5ee"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "print(\"Random forest (original) classification report\")\n",
+        "print(classification_report(y_test, rf_pred, target_names=['1980 or After', 'Before 1980']))\n",
+        "rf_r = permutation_importance(rfmodel, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\n",
+        "rf_importances = pd.Series(rf_r.importances_mean, index=feature_names)\n",
+        "print(\"Top 5 Importances (Random Forest):\")\n",
+        "for f, i in rf_importances.nlargest(5).items():\n",
+        "    print(f\"  {f}: {i:.4f}\")\n",
+        "print(\"/n/n\")\n",
+        "print(\"Logistic Regression classification report\")\n",
+        "print(classification_report(y_test, lr_pred, target_names=['1980 or After', 'Before 1980']))\n",
+        "lr_r = permutation_importance(lrmodel, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\n",
+        "lr_importances = pd.Series(lr_r.importances_mean, index=feature_names)\n",
+        "print(\"Top 5 Importances (Logistic Regression):\")\n",
+        "for f, i in lr_importances.nlargest(5).items():\n",
+        "    print(f\"  {f}: {i:.4f}\")\n",
+        "print(\"/n/n\")\n",
+        "print(\"Gradient boosting classification report\")\n",
+        "print(classification_report(y_test, gb_pred, target_names=['1980 or After', 'Before 1980']))\n",
+        "gb_r = permutation_importance(gb_model, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\n",
+        "gb_importances = pd.Series(gb_r.importances_mean, index=feature_names)\n",
+        "print(\"Top 5 Importances (Gradient Boosting):\")\n",
+        "for f, i in gb_importances.nlargest(5).items():\n",
+        "    print(f\"  {f}: {i:.4f}\")"
+      ],
+      "id": "2ab0757d",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

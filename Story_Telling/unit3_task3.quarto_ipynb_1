@@ -1,0 +1,187 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report - Joins\"\n",
+        "subtitle: \"Unit 3 Task 3\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "ef9a0ac9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl\n",
+        "import numpy as np\n",
+        "import sqlite3\n",
+        "from lets_plot import *\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)"
+      ],
+      "id": "284c93bd",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n",
+        "\n",
+        "# Include and execute your code here\n",
+        "sqlite_file = 'lahmansbaseballdb.sqlite'\n",
+        "# this file must be in the same location as your .qmd or .py file\n",
+        "con = sqlite3.connect(sqlite_file)"
+      ],
+      "id": "802287f0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 1\n",
+        "\n",
+        "__Write an SQL query that pulls in the the salaries table and the collegeplaying table (and any other tables you might need) and store them in polars dataframes. In Python Polars, combine the dataframes to create a list of baseball players who attended BYU-Idaho. The new table should contain five columns: playerID, schoolID, salary, yearID and teamID associated with each salary.__\n",
+        "\n",
+        "For this question, I first read in the two tables and then joined them and filtered through them, giving me a list of all baseball players who attended BYU Idaho. I then filtered out the columns I wanted to view, giving me the final results for all players who attened BYUI in an easy to read table. "
+      ],
+      "id": "54717f00"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "q = \"\"\"\n",
+        "    SELECT * FROM salaries\n",
+        "\"\"\"\n",
+        "salaries = pl.read_database(q, con)\n",
+        "\n",
+        "q = \"\"\"\n",
+        "    SELECT * FROM collegeplaying\n",
+        "\"\"\"\n",
+        "collegeplaying = pl.read_database(q, con)\n",
+        "\n",
+        "# Keep the most recent salary per player (by yearID) to avoid multiple rows per player\n",
+        "salaries_latest = salaries.sort(\"yearID\", descending=True).unique(subset=[\"playerID\"])\n",
+        "\n",
+        "# Keep the most recent college record per player as well\n",
+        "collegeplaying_recent = collegeplaying.sort(\"yearID\", descending=True).unique(subset=[\"playerID\"])\n",
+        "\n",
+        "# Join on playerID and filter for BYU-Idaho; ensure final rows are unique per playerID\n",
+        "together = salaries_latest.join(collegeplaying_recent, on=\"playerID\", how=\"inner\")\n",
+        "result = (\n",
+        "    together\n",
+        "    .filter(pl.col(\"schoolID\") == \"idbyuid\")\n",
+        "    .select([\"playerID\", \"schoolID\", \"salary\", \"yearID\", \"teamID\"])\n",
+        "    .unique(subset=[\"playerID\"])\n",
+        ")\n",
+        "print(result)"
+      ],
+      "id": "6e2b4857",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# con = sqlite3.connect(sqlite_file)\n",
+        "\n",
+        "#q = '''\n",
+        "#SELECT * FROM batting\n",
+        "#'''\n",
+        "#result = pl.read_database(q, con)\n",
+        "#print(result)"
+      ],
+      "id": "d75065b4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 2\n",
+        "\n",
+        "__Pick any two baseball teams and compare them using a metric of your choice (average salary, home runs, number of wins, etc). Be creative! Write an SQL query to read in the table(s) you need, then use polars to manipulate the data. Finally, make a graph using Lets-Plot to visualize the comparison. What do you learn?__\n",
+        "\n",
+        "I decided to see what the average attendance of a baseball game was for two teams, the New York Yankees and the Houton Astros. I thought that the teamsfranchises table would be helpful to call the teams their franchise names in the graph but I ended up not using it and just manipulaiting the graph details themselves. We can learn here that the astros typically have more fans attending their games."
+      ],
+      "id": "6c132bd0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "q = \"\"\"\n",
+        " SELECT teamkey, games, attendance, yearkey \n",
+        " FROM homegames\n",
+        " WHERE yearkey > 1965\n",
+        "\"\"\"\n",
+        "attendance = pl.read_database(q, con)\n",
+        "q = \"\"\"\n",
+        "SELECT franchNAME, franchID \n",
+        "FROM teamsfranchises\n",
+        "\"\"\"\n",
+        "franch = pl.read_database(q, con)\n",
+        "result = attendance.join(franch, left_on=\"teamkey\", right_on=\"franchID\", how=\"left\")\n",
+        "result = result.with_columns(one_game=(pl.col('attendance') / pl.col('games')).round(0)).filter(pl.col(\"teamkey\").is_in([\"HOU\", \"NYA\"]))\n",
+        "\n",
+        "(ggplot(result, aes(x=\"yearkey\", y=\"one_game\", color=\"teamkey\"))\n",
+        "    + geom_line(size=1)\n",
+        "    + scale_color_manual(values={\"NYA\": \"navy\", \"HOU\": \"orange\"})\n",
+        "    + labs(\n",
+        "        title=\"Average Game Attendance Since 1965\",\n",
+        "        x=\"Year\",\n",
+        "        y=\"Avg Attendance per Game\",\n",
+        "        color=\"Team\"\n",
+        "    )\n",
+        "    + scale_x_continuous(format=\"{d}\")\n",
+        ")"
+      ],
+      "id": "063e2eba",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

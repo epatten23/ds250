@@ -1,0 +1,226 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report - Star Wars for Dummies\"\n",
+        "subtitle: \"Unit 5 Task 3\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "1a798dac"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl \n",
+        "import numpy as np\n",
+        "from lets_plot import *\n",
+        "import polars.selectors as cs\n",
+        "# add the additional libraries you need to import for ML here\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)\n",
+        "\n",
+        "data_url = \"https://byuidatascience.github.io/DS250-Course-Polars/Data/StarWars_with_emails.csv\""
+      ],
+      "id": "94a10a04",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<!-- The first 10 rows are not part of the datset we need.\n",
+        "\n",
+        "The columns headers are split across two rows. We need to clean and simplify the column headers-->"
+      ],
+      "id": "2a31ce38"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Read in and tidy up the first row\n",
+        "a = pl.Series(pl.read_csv(data_url, skip_rows = 10, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n",
+        "# Note the non-aschii character in the column \"Do you consider yourself to be a fan of the Expanded Universe\". (column AF if you open it in Excel). \n",
+        "\n",
+        "# BTW: Detecting what it is and where can be difficult\n",
+        "\n",
+        "# Lossy means that invalid utf8 values are replaced with � characters. When using other encodings than utf8 or utf8-lossy, the input is first decoded in memory with python. Defaults to utf8...ignore_errors = True does not replace the non-utf8 character with a blank space like you would hope\n",
+        "\n",
+        "a[2] = \"seen_any\" #simply overwrite the value at index 2\n",
+        "\n",
+        "# Rather than changing each column header manually,\n",
+        "# here we use regex to apply changes more efficiently\n",
+        "a = (\n",
+        "  a.str.replace(r\".+seen.+\", \"seen_\")\n",
+        "   .str.replace(r\".+rank.+\", \"rank_\")\n",
+        "   .str.replace(r\"(.+favorably.+)\", \"fav_\")\n",
+        "   .fill_null(strategy = \"forward\")\n",
+        "\n",
+        "   .str.replace(\"\\uFFFD+\", \"\") #this gets rid of the question marks in a diamond characters \n",
+        "   .str.strip_chars()\n",
+        "   .str.to_lowercase()\n",
+        "   .str.replace_all(\" \", \"_\")\n",
+        "   .str.replace(r\"location(.+)\", \"location\")\n",
+        "\n",
+        ")\n",
+        "a[3] = \"star_wars_fan\"\n",
+        "a[30] = \"who_shot_first\"\n",
+        "a[31] = \"know_expanded_universe\"\n",
+        "a[32] = \"expanded_universe_fan\"\n",
+        "a[33] = \"star_trek_fan\""
+      ],
+      "id": "1e4d6c26",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<!-- Combine series q and a into one series to be used as column names-->"
+      ],
+      "id": "0020ab31"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "b = pl.Series(pl.read_csv(data_url, skip_rows = 11, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n",
+        "\n",
+        "b = (\n",
+        "  b.str.replace(r\"Star Wars: (Episode \\w+) .+\", \"${1}\")\n",
+        "   .str.replace(\"Response\", \"\")\n",
+        "   .str.replace_all(\" \", \"_\")\n",
+        "   .fill_null(\"\")\n",
+        "   .str.strip_chars()\n",
+        ")"
+      ],
+      "id": "41686e0b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#Now combine the two series, each of which contains part of the desired column header\n",
+        "new_names = (a + b).to_list()\n",
+        "\n",
+        "# Read in the data, skipping over the column header rows\n",
+        "# and use 'new_names' as the column headers\n",
+        "df = pl.read_csv(data_url, skip_rows=12, has_header=False, new_columns = new_names )"
+      ],
+      "id": "d6846907",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Executive Summary\n",
+        " - This is a high level overview of the analysis, including the problem statement, the data used, and the main findings. It should be concise and to the point, summarizing the key insights/recommendations without going into too much detail. These are usually bullet points, no graphs. PLEASE EXPLICITLY STATE IN THIS SECTION WHETHER YOU DID THE STRETCH OR NOT!\n",
+        "_type your write-up and analysis here_\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Methods\n",
+        "\n",
+        "this is a high level overview of the methods used in the analysis. This should include an explanation of data preparation steps, especially how you dealt with each categorical variable and why. Showing the resulting or original distribution of variables may be helpful. Describe how you handled missing values and outliers. How did/might your decisions impact results? Explain any feature engineering steps you took. This is also where you will put the graphs you recreated to show you validated the dataset and that it matches the article.\n",
+        "\n",
+        "Regex is used to parse the email column and extract each respondent's first name, last name, and email domain into separate columns. Each pattern uses markers in the email — such as the start of a string and the @ symbol — to isolate the relevant text."
+      ],
+      "id": "b95ccb8f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Extract first name, last name, and email domain from the email column\n",
+        "df = df.with_columns([\n",
+        "    pl.col(\"email\").str.strip_chars().str.extract(r\"^([a-zA-Z]+)\", 1).alias(\"first_name\"),\n",
+        "    pl.col(\"email\").str.strip_chars().str.extract(r\"([a-zA-Z]+)@\", 1).alias(\"last_name\"),\n",
+        "    pl.col(\"email\").str.strip_chars().str.extract(r\"@([a-zA-Z0-9]+)\", 1).alias(\"email_domain\"),\n",
+        "])\n",
+        "df.select([\"email\", \"first_name\", \"last_name\", \"email_domain\"]).head(5)"
+      ],
+      "id": "e9bd9dc1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Here we count the email domains, normalizing all domains to lowercase before grouping, since the raw data contains inconsistent capitalization. This ensures that variations of the same domain are counted together rather than treated as separate entries."
+      ],
+      "id": "ad07774c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Unique email domain count\n",
+        "domain_count = (df.with_columns(pl.col(\"email_domain\").str.to_lowercase()).group_by(\"email_domain\").len().rename({\"len\": \"domain_count\"}).sort(\"domain_count\", descending=True))\n",
+        "domain_count"
+      ],
+      "id": "2f186094",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Results\n",
+        "\n",
+        "this is a more in-depth explanation of results. A classification report and feature importance graphs belong here.\n",
+        "_type your report here, you will likely want multiple code chunks and text intermingled_\n",
+        "\n",
+        "\n",
+        "## Conclusion\n",
+        " this is where you will discuss the implication of the results, including any limitations of the analysis, and recommendations for actions/future work. It may feel repetitive to the executive summary, but it should be more detailed and include any additional insights you gained from the analysis. -->\n",
+        "\n",
+        "_type your write-up and analysis here_"
+      ],
+      "id": "3bf88f81"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

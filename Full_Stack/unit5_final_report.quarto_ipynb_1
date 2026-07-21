@@ -1,0 +1,511 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report - Star Wars for Dummies\"\n",
+        "subtitle: \"Unit 5 Task 3\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "bad03e13"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl \n",
+        "import numpy as np\n",
+        "from lets_plot import *\n",
+        "import polars.selectors as cs\n",
+        "import pandas as pd\n",
+        "# imports for ML\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn import metrics\n",
+        "from sklearn.ensemble import RandomForestClassifier\n",
+        "from sklearn.metrics import classification_report\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)\n",
+        "\n",
+        "data_url = \"https://byuidatascience.github.io/DS250-Course-Polars/Data/StarWars_with_emails.csv\""
+      ],
+      "id": "ff318e7e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<!-- The first 10 rows are not part of the datset we need.\n",
+        "\n",
+        "The columns headers are split across two rows. We need to clean and simplify the column headers-->"
+      ],
+      "id": "f1682a63"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Read in and tidy up the first row\n",
+        "a = pl.Series(pl.read_csv(data_url, skip_rows = 10, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n",
+        "# Note the non-aschii character in the column \"Do you consider yourself to be a fan of the Expanded Universe\". (column AF if you open it in Excel). \n",
+        "\n",
+        "# BTW: Detecting what it is and where can be difficult\n",
+        "\n",
+        "# Lossy means that invalid utf8 values are replaced with � characters. When using other encodings than utf8 or utf8-lossy, the input is first decoded in memory with python. Defaults to utf8...ignore_errors = True does not replace the non-utf8 character with a blank space like you would hope\n",
+        "\n",
+        "a[2] = \"seen_any\" #simply overwrite the value at index 2\n",
+        "\n",
+        "# Rather than changing each column header manually,\n",
+        "# here we use regex to apply changes more efficiently\n",
+        "a = (\n",
+        "  a.str.replace(r\".+seen.+\", \"seen_\")\n",
+        "   .str.replace(r\".+rank.+\", \"rank_\")\n",
+        "   .str.replace(r\"(.+favorably.+)\", \"fav_\")\n",
+        "   .fill_null(strategy = \"forward\")\n",
+        "\n",
+        "   .str.replace(\"\\uFFFD+\", \"\") #this gets rid of the question marks in a diamond characters \n",
+        "   .str.strip_chars()\n",
+        "   .str.to_lowercase()\n",
+        "   .str.replace_all(\" \", \"_\")\n",
+        "   .str.replace(r\"location(.+)\", \"location\")\n",
+        "\n",
+        ")\n",
+        "a[3] = \"star_wars_fan\"\n",
+        "a[30] = \"who_shot_first\"\n",
+        "a[31] = \"know_expanded_universe\"\n",
+        "a[32] = \"expanded_universe_fan\"\n",
+        "a[33] = \"star_trek_fan\""
+      ],
+      "id": "189332d6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<!-- Combine series q and a into one series to be used as column names-->"
+      ],
+      "id": "6c11ac14"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "b = pl.Series(pl.read_csv(data_url, skip_rows = 11, n_rows=1, has_header=False, encoding = 'utf8-lossy').row(0))\n",
+        "\n",
+        "b = (\n",
+        "  b.str.replace(r\"Star Wars: (Episode \\w+) .+\", \"${1}\")\n",
+        "   .str.replace(\"Response\", \"\")\n",
+        "   .str.replace_all(\" \", \"_\")\n",
+        "   .fill_null(\"\")\n",
+        "   .str.strip_chars()\n",
+        ")"
+      ],
+      "id": "5255b5fc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#Now combine the two series, each of which contains part of the desired column header\n",
+        "new_names = (a + b).to_list()\n",
+        "\n",
+        "# Read in the data, skipping over the column header rows\n",
+        "# and use 'new_names' as the column headers\n",
+        "df = pl.read_csv(data_url, skip_rows=12, has_header=False, new_columns = new_names )"
+      ],
+      "id": "82638e4e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Executive Summary\n",
+        "\n",
+        "- This report uses the FiveThirtyEight Star Wars survey to predict whether a respondent's household income is above $50,000 using a Random Forest Classifier.\n",
+        "- The dataset includes 835 respondents who have seen at least one Star Wars film. Survey responses were cleaned and encoded for use in the model.\n",
+        "- The model achieved approximately 65% accuracy on the test set.\n",
+        "- The stretch was completed: two charts from the article are recreated and validate the dataset.\n",
+        "\n",
+        "\n",
+        "## Methods\n",
+        "\n",
+        "Regex is used to parse the email column and extract each respondent's first name, last name, and email domain into separate columns. Each pattern uses markers in the email — such as the start of a string and the @ symbol — to isolate the relevant text."
+      ],
+      "id": "4f32fa10"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Extract first name, last name, and email domain from the email column\n",
+        "df = df.with_columns([\n",
+        "    pl.col(\"email\").str.strip_chars().str.extract(r\"^([a-zA-Z]+)\", 1).alias(\"first_name\"),\n",
+        "    pl.col(\"email\").str.strip_chars().str.extract(r\"([a-zA-Z]+)@\", 1).alias(\"last_name\"),\n",
+        "    pl.col(\"email\").str.strip_chars().str.extract(r\"@([a-zA-Z0-9]+)\", 1).alias(\"email_domain\"),\n",
+        "])\n",
+        "df.select([\"email\", \"first_name\", \"last_name\", \"email_domain\"]).head(5)"
+      ],
+      "id": "84894e42",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Here we count the email domains, normalizing all domains to lowercase before grouping, since the raw data contains inconsistent capitalization. This ensures that variations of the same domain are counted together rather than treated as separate entries."
+      ],
+      "id": "55e451d5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Unique email domain count\n",
+        "domain_count = (df.with_columns(pl.col(\"email_domain\").str.to_lowercase()).group_by(\"email_domain\").len().sort(\"len\", descending=True))\n",
+        "domain_count"
+      ],
+      "id": "28a26a6f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The dataset is filtered to respondents who have seen at least one Star Wars film. Rather than relying on the self-reported `seen_any` column, we check the six individual film columns directly — if any are non-null, the respondent has seen at least one film."
+      ],
+      "id": "f5b69efa"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Respondents who have seen at least one Star Wars film\n",
+        "seen_cols = [c for c in df.columns if c.startswith(\"seen_\") and c != \"seen_any\"]\n",
+        "df_seen = df.filter(\n",
+        "    pl.any_horizontal([pl.col(c).is_not_null() for c in seen_cols])\n",
+        ")\n",
+        "\n",
+        "print(df_seen.head(5))"
+      ],
+      "id": "ceb5a55d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Here we pull apart the answers that are numbers yet currently formatted as strings and turn them into numbers. For range values, the lower number is used. The categories must be numeric for machine learning, so each category is mapped to an integer. This preserves the ordering of each variable and keeps the conversion simple and consistent. Rows where no income was reported are removed. For other missing values, we filled it with a 0 before passing to the model. Now instead of dropping important rows, we can just drop it from that feature. Now we can use 'df_for_ml' as our machine learning ready data set!"
+      ],
+      "id": "e3640776"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Age\n",
+        "age_map = {\"18-29\": 18, \"30-44\": 30, \"45-60\": 45, \"> 60\": 60}\n",
+        "\n",
+        "df_for_ml = (\n",
+        "    df_seen\n",
+        "    .with_columns(pl.col(\"age\").replace(age_map).cast(pl.Int32).alias(\"age_num\"))\n",
+        "    .drop(\"age\")\n",
+        ")\n",
+        "# Education\n",
+        "education_ = {\n",
+        "    \"Less than high school degree\": 1,\n",
+        "    \"High school degree\": 2,\n",
+        "    \"Some college or Associate degree\": 3,\n",
+        "    \"Bachelor degree\": 4,\n",
+        "    \"Graduate degree\": 5,\n",
+        "}\n",
+        "\n",
+        "df_for_ml = (\n",
+        "    df_for_ml\n",
+        "    .with_columns(pl.col(\"education\").replace(education_).cast(pl.Int32).alias(\"education_num\"))\n",
+        "    .drop(\"education\")\n",
+        ")\n",
+        "# Income\n",
+        "income = {\n",
+        "    \"$0 - $24,999\": 0,\n",
+        "    \"$25,000 - $49,999\": 25000,\n",
+        "    \"$50,000 - $99,999\": 50000,\n",
+        "    \"$100,000 - $149,999\": 100000,\n",
+        "    \"$150,000+\": 150000,\n",
+        "}\n",
+        "\n",
+        "df_for_ml = (\n",
+        "    df_for_ml\n",
+        "    .with_columns(pl.col(\"household_income\").replace(income).cast(pl.Int64).alias(\"income_num\"))\n",
+        "    .drop(\"household_income\")\n",
+        ")\n",
+        "# Favorability\n",
+        "fav = {\n",
+        "    \"Very favorably\": 5,\n",
+        "    \"Somewhat favorably\": 4,\n",
+        "    \"Neither favorably nor unfavorably (neutral)\": 3,\n",
+        "    \"Somewhat unfavorably\": 2,\n",
+        "    \"Very unfavorably\": 1,\n",
+        "    \"Unfamiliar (N/A)\": 0,\n",
+        "}\n",
+        "\n",
+        "fav_columns = [c for c in df.columns if c.startswith(\"fav_\")]\n",
+        "\n",
+        "df_for_ml = (\n",
+        "    df_for_ml\n",
+        "    .with_columns([pl.col(c).replace(fav).cast(pl.Int32) for c in fav_columns])\n",
+        ")\n",
+        "\n",
+        "# Drop identifier columns\n",
+        "df_for_ml = df_for_ml.drop([\"respondentid\", \"first_name\", \"last_name\", \"email\"])\n",
+        "\n",
+        "# Household income \n",
+        "df_for_ml = df_for_ml.with_columns(\n",
+        "    (pl.col(\"income_num\") >= 50000).cast(pl.Int8).alias(\"high_income\")\n",
+        ")\n",
+        "\n",
+        "# show head of complete data set \n",
+        "df_for_ml.select([\"age_num\", \"education_num\", \"income_num\"] + fav_columns).head(5)"
+      ],
+      "id": "05bd840c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Any remaining string inputs that couldn't be mapped to an integer are one-hot encoded, converting them to binary columns. Here we're able to create our Machine Learning model to predict if a respondent's household income is over $50,000. We remove the rows where the respondents didn't record their income.Then we choose our features and target. We then split the data 70/30 and created our model. The model's accuracy is shown below. "
+      ],
+      "id": "d2d82a37"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# One-hot encode remaining strings\n",
+        "str_cols = df_for_ml.select(cs.string()).columns\n",
+        "df_for_ml = df_for_ml.to_dummies(columns=str_cols)\n",
+        "\n",
+        "# Remove rows where income was not reported\n",
+        "df_model = df_for_ml.filter(pl.col(\"high_income\").is_not_null())\n",
+        "\n",
+        "# Set features\n",
+        "feature_cols = [c for c in df_model.columns if c not in [\"high_income\", \"income_num\"]]\n",
+        "\n",
+        "features = df_model.select(feature_cols).fill_null(0).to_numpy()\n",
+        "target = df_model.select(\"high_income\").to_numpy().ravel()\n",
+        "\n",
+        "x_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.3)\n",
+        "\n",
+        "# Create model\n",
+        "model = RandomForestClassifier()\n",
+        "model.fit(x_train, y_train)\n",
+        "\n",
+        "y_pred = model.predict(x_test)\n",
+        "\n",
+        "acc = metrics.accuracy_score(y_test, y_pred)\n",
+        "print('accuracy:', acc)"
+      ],
+      "id": "3cc4d7e4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Results\n",
+        "\n",
+        "Here is the shape of the table for all the respondents who have seen at least one film, adding up to a total of 835."
+      ],
+      "id": "fcb405d7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Shape of table for respondents who have seen at least one Star Wars film\n",
+        "print(df_seen.shape)"
+      ],
+      "id": "7f300c7b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The model reached 65% accuracy on the test set. Looking at the classification report, precision and recall are stronger for the under $50k group than the over $50k group, which makes sense because higher-income respondents aren't as represented in the data."
+      ],
+      "id": "a58abbd1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(classification_report(y_test, y_pred, target_names=[\"< $50k\", \">= $50k\"]))"
+      ],
+      "id": "798fd83c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "To validate our dataset, we recreated two charts from the original FiveThirtyEight article. The distributions line up closely, confirming the data is accurate."
+      ],
+      "id": "012018d5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# stretch — Chart 1: Which Star Wars films have you seen?\n",
+        "seen_film_cols = [c for c in df.columns if c.startswith(\"seen_\") and c != \"seen_any\"]\n",
+        "n_seen = len(df_seen)\n",
+        "\n",
+        "film_name_map = {\n",
+        "    \"seen_Episode_I\":   \"The Phantom Menace\",\n",
+        "    \"seen_Episode_II\":  \"Attack of the Clones\",\n",
+        "    \"seen_Episode_III\": \"Revenge of the Sith\",\n",
+        "    \"seen_Episode_IV\":  \"A New Hope\",\n",
+        "    \"seen_Episode_V\":   \"The Empire Strikes Back\",\n",
+        "    \"seen_Episode_VI\":  \"Return of the Jedi\",\n",
+        "}\n",
+        "\n",
+        "episode_order = [\n",
+        "    \"The Phantom Menace\",\n",
+        "    \"Attack of the Clones\",\n",
+        "    \"Revenge of the Sith\",\n",
+        "    \"A New Hope\",\n",
+        "    \"The Empire Strikes Back\",\n",
+        "    \"Return of the Jedi\",\n",
+        "]\n",
+        "\n",
+        "chart1 = pl.DataFrame([\n",
+        "    {\"film\": film_name_map[c],\n",
+        "     \"pct\": round(df_seen[c].is_not_null().sum() / n_seen * 100)}\n",
+        "    for c in seen_film_cols if c in film_name_map\n",
+        "])\n",
+        "\n",
+        "# coord_flip reverses order, so feed the list bottom-to-top\n",
+        "film_order = list(reversed(episode_order))\n",
+        "\n",
+        "(ggplot(chart1, aes(x=\"film\", y=\"pct\"))\n",
+        "    + geom_bar(stat=\"identity\", fill=\"#008fd5\", width=0.7)\n",
+        "    + geom_text(aes(label=\"pct\"), nudge_y=3, format=\"{d}%\", size=7, color=\"#008fd5\")\n",
+        "    + coord_flip()\n",
+        "    + scale_x_discrete(limits=film_order)\n",
+        "    + scale_y_continuous(limits=[0, 100])\n",
+        "    + labs(\n",
+        "        title=\"Which 'Star Wars' Movies Have You Seen?\",\n",
+        "        subtitle=\"Of 835 respondents who have seen any Star Wars film\",\n",
+        "        x=\"\", y=\"\")\n",
+        "    + theme(\n",
+        "        panel_grid_major_y=element_blank(),\n",
+        "        panel_grid_minor=element_blank(),\n",
+        "        axis_text_y=element_text(hjust=1))\n",
+        ")"
+      ],
+      "id": "37928724",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# stretch — Chart 2 (article's Chart 5): Who Shot First?\n",
+        "shot_counts = (\n",
+        "    df_seen\n",
+        "    .filter(pl.col(\"who_shot_first\").is_not_null())\n",
+        "    .group_by(\"who_shot_first\")\n",
+        "    .len()\n",
+        "    .rename({\"len\": \"count\"})\n",
+        "    .with_columns(\n",
+        "        (pl.col(\"count\") / pl.col(\"count\").sum() * 100).round().alias(\"pct\")\n",
+        "    )\n",
+        ")\n",
+        "\n",
+        "n_answered = shot_counts[\"count\"].sum()\n",
+        "\n",
+        "# Order: Han on top, then Greedo, then \"I don't understand...\"\n",
+        "shot_order = [\"I don't understand this question\", \"Greedo\", \"Han\"]\n",
+        "\n",
+        "(ggplot(shot_counts, aes(x=\"who_shot_first\", y=\"pct\"))\n",
+        "    + geom_bar(stat=\"identity\", fill=\"#008fd5\", width=0.7)\n",
+        "    + geom_text(aes(label=\"pct\"), nudge_y=2, format=\"{d}%\", size=7, color=\"#008fd5\")\n",
+        "    + coord_flip()\n",
+        "    + scale_x_discrete(limits=shot_order)\n",
+        "    + scale_y_continuous(limits=[0, 60])\n",
+        "    + labs(\n",
+        "        title=\"Who Shot First?\",\n",
+        "        subtitle=f\"According to {n_answered} respondents\",\n",
+        "        x=\"\", y=\"\")\n",
+        "    + theme(\n",
+        "        panel_grid_major_y=element_blank(),\n",
+        "        panel_grid_minor=element_blank(),\n",
+        "        axis_text_y=element_text(hjust=1))\n",
+        ")"
+      ],
+      "id": "335a74dd",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Conclusion\n",
+        "\n",
+        " The model reached around 65% accuracy predicting whether a Star Wars fan earns over $50,000. The biggest limitation is that this is self-reported data, so people may not answer income questions accurately or at all. Going forward, it would be interesting to see if adding more demographic features or trying a different model type could push accuracy higher. The Star Wars data is fun to work with but probably isn't the most reliable dataset for income prediction, but it is a good proof of concept that survey data can be used for this kind of prediction."
+      ],
+      "id": "9089a739"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

@@ -1,0 +1,151 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report - Baseball Database\"\n",
+        "subtitle: \"Unit 3 Task 1\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "c679aa8c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl\n",
+        "import numpy as np\n",
+        "import sqlite3\n",
+        "from lets_plot import *\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)"
+      ],
+      "id": "9afceaa6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n",
+        "\n",
+        "# Include and execute your code here\n",
+        "sqlite_file = 'lahmansbaseballdb.sqlite'\n",
+        "# this file must be in the same location as your .qmd or .py file\n",
+        "con = sqlite3.connect(sqlite_file)"
+      ],
+      "id": "5e00ae05",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "\n",
+        "# The code below uses some basic SQL code to read in the entire 'batting' table in the database and store it in a polars dataframe called 'results'. You must write polars code to manipulate the results dataframe to address the task.\n",
+        "\n",
+        "q = \"\"\"\n",
+        "    SELECT *\n",
+        "    FROM batting\n",
+        "    \"\"\"\n",
+        "results = pl.read_database(q, con, infer_schema_length=None) \n",
+        "# What does infer_schema_length = None do?\n",
+        "results"
+      ],
+      "id": "cd8d7894",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 1\n",
+        "\n",
+        "__Use the provided code above to read in the batting table. Then, with Python Polars manipulate the 'results' dataframe to calculate the number of at bats and the batting average for each year a player played. Filter the data frame to only include players with at least 10 at bats that year. Sort the dataframe from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.__\n",
+        "\n",
+        "Note: A batting average is meant to measure how often a player puts the ball in play and gets to base safely. For this task, use a simplified version of batting average defined as the sum of hits (labeled 'H') divided by number of at bats (labeled 'AB').\n",
+        "\n",
+        "Here we can create a new column, using the already established columns for hits and at bats to calculate and save the batting average. Then we filter out the rows in which players had less than 10 at bats and sort the columns by batting average and then their player id. Here we find the highest batting average happened in 1929 with a .51 batting average."
+      ],
+      "id": "9ecd459a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "results_per_year = results.with_columns(batting_average = pl.col(\"H\") / pl.col(\"AB\")).filter(pl.col('AB') > 10).sort([\"batting_average\", 'playerID'], descending = [True, False])\n",
+        "\n",
+        "print(results_per_year.select(\"playerID\", 'yearID', \"AB\", 'H', \"batting_average\").head(5))"
+      ],
+      "id": "b84704c7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 2\n",
+        "\n",
+        "__Use the provided code above to read in the batting table. Then, with Python Polars manipulate the 'results' dataframe to calculate the batting average for each player over their entire career (all years combined). Only include players with at least 100 at bats over their entire career. Sort the dataframe from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.__ \n",
+        "\n",
+        "Note: A batting average is meant to measure how often a player puts the ball in play and gets to base safely. For this task, use a simplified version of batting average defined as the sum of hits (labeled 'H') divided by number of at bats (labeled 'AB').\n",
+        "\n",
+        "For this table I used practically the same methodology. The only thing that changed is I made sure to sum the at bats and hits for each player over all the years and then the table could be filtered by at bats (more than 100) and sorted."
+      ],
+      "id": "5fd9abda"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "results_total = results.group_by('playerID').agg(pl.col('H').sum().alias('total_hits'), (pl.col('AB').sum().alias(\"at_bat\"))).with_columns(batting_average = pl.col(\"total_hits\") / pl.col(\"at_bat\")).filter(pl.col('at_bat') >= 100).sort([\"batting_average\", 'playerID'], descending = [True, False])\n",
+        "\n",
+        "print(results_total.select(\"playerID\", \"at_bat\", 'total_hits', \"batting_average\").head(5))"
+      ],
+      "id": "090c51f2",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

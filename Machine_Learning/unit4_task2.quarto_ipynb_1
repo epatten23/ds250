@@ -1,0 +1,222 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report -How good is it, really?\"\n",
+        "subtitle: \"Unit 4 Task 2\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "6353a703"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl\n",
+        "import numpy as np\n",
+        "from lets_plot import *\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn import metrics\n",
+        "from sklearn.ensemble import RandomForestClassifier\n",
+        "from sklearn.inspection import permutation_importance\n",
+        "from sklearn.metrics import confusion_matrix, classification_report\n",
+        "import pandas as pd\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)"
+      ],
+      "id": "e9d27a62",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# import your data here using polars and the URL\n",
+        "data = 'dwellings_ml.txt'\n",
+        "dwellings = pl.read_csv(data)"
+      ],
+      "id": "ad8d25fb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 1\n",
+        "\n",
+        "1. __Describe the quality of your classification model using 2-3 different evaluation metrics.__ You also need to explain how to define/interpret each of the evaluation metrics you use.  \n",
+        "\n",
+        "Here I use 3 different tests to see how accurate and precise my model is. First we use the accuracy score, then I pull in a classification report which is able to read through both the precision, f1-score, and recall of the model.\n",
+        "I also added in a confusion matrix because I thought it was intriguing to see how many of the predictions. The top left block shows us how many were true negatives, the top right shows false negatives, the bottom left shows false positives and the bottom right shows true positives. Here we're able to see how many cases are incorrect.   "
+      ],
+      "id": "63aca69a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "# Don't forget, you need another import statement to import the desired ML model from sklearn\n",
+        "feature_names = [\n",
+        "  'livearea','finbsmnt','basement','stories','nocars','numbdrm','numbaths','condition_AVG',\n",
+        "  'quality_A','quality_B','quality_C','quality_D','quality_X',\n",
+        "  'gartype_Att','gartype_Det','gartype_None','gartype_CP'\n",
+        "]\n",
+        "features = dwellings.select(feature_names).to_numpy()\n",
+        "target = dwellings.select('before1980').to_numpy().ravel()\n",
+        "x_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.3, stratify=target)\n",
+        "model = RandomForestClassifier()\n",
+        "model.fit(x_train, y_train)\n",
+        "y_pred = model.predict(x_test)\n",
+        "\n",
+        "\n",
+        "acc = metrics.accuracy_score(y_test, y_pred)\n",
+        "print('Accuracy:', acc)\n",
+        "\n",
+        "print('Classification report:')\n",
+        "print(classification_report(y_test, y_pred))\n",
+        "\n",
+        "print('Confusion matrix:')\n",
+        "cm = confusion_matrix(y_test, y_pred)\n",
+        "print(cm)"
+      ],
+      "id": "cec661dc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 2\n",
+        "\n",
+        "1. __Justify your classification model by discussing the most important features selected by your model.__ This discussion should include a plot of permutation importance values for the most important features. Were there any features you thought would be importance but weren't?\n",
+        "\n",
+        "I ran the permutation test and ploted the top 10 features. In the last task I guessed that the living area, finished basement, and condition of the house would be the most important features. While they were all in the top ten, I thought that the condition of the house would be more important than it was. I was surprised that the number of stories came out as number one. "
+      ],
+      "id": "b5c1eca9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "r = permutation_importance(model, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\n",
+        "\n",
+        "importances = pd.Series(r.importances_mean, index=feature_names)\n",
+        "top = importances.nlargest(10)\n",
+        "\n",
+        "df_perm = pd.DataFrame({\n",
+        "  'feature': top.index,\n",
+        "  'importance': top.values,\n",
+        "})\n",
+        "df_perm['feature'] = pd.Categorical(df_perm['feature'], categories=df_perm['feature'], ordered=True)\n",
+        "\n",
+        "(ggplot(df_perm, aes(x='feature', y='importance', fill='feature'))\n",
+        " + geom_bar(stat='identity', fill = \"blue\")\n",
+        " + labs(\n",
+        "     title='Top 10 Permutation Importances',\n",
+        "     x='Feature',\n",
+        "     y='Mean accuracy decrease'\n",
+        "   )\n",
+        ")"
+      ],
+      "id": "00ec71b7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 3\n",
+        "\n",
+        "1. __For the 3 most important features, explain their relationship to the target variable. Use a plot to illustrate the relationship.__ (3 plots minimum)\n",
+        "\n",
+        "Here I grab the top 3 features from the permutation test and plot them against the target variable. The top 3 features were number of stories, number of baths, and number of rooms. We can see that for all three features, the houses built before 1980 tend to have fewer stories, fewer baths, and fewer rooms than those built in 1980 or later."
+      ],
+      "id": "c8e4807c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Include and execute your code here\n",
+        "r = permutation_importance(model, x_test, y_test, n_repeats=10, random_state=0, n_jobs=1)\n",
+        "top_idx = r.importances_mean.argsort()[::-1][:4]\n",
+        "top_features = [feature_names[i] for i in top_idx]\n",
+        "\n",
+        "df_q3 = dwellings.select(top_features + ['before1980']).to_pandas()\n",
+        "df_q3['before1980'] = df_q3['before1980'].map({0: '1980 or later', 1: 'before 1980'})\n",
+        "(\n",
+        "    ggplot(df_q3, aes(x='before1980', y=top_features[0], fill='before1980'))\n",
+        "    + geom_boxplot()\n",
+        "    + labs(title=f'Stories by build year group', x='Build year category', y = \"Stories\", fill='Build year category'))"
+      ],
+      "id": "235981c8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "(ggplot(df_q3, aes(x='before1980', y=top_features[1], fill='before1980'))\n",
+        "    + geom_boxplot()\n",
+        "    + labs(title=f'Number of baths by build year group', x='Build year category', y=\"Number of baths\", fill='Build year category'))"
+      ],
+      "id": "d347510e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "(ggplot(df_q3, aes(x='before1980', y=top_features[2], fill='before1980'))\n",
+        "  + geom_boxplot()\n",
+        "  + labs(title=f'Number of rooms by build year group', x='Build year category', y=\"Number of rooms\", fill='Build year category'))"
+      ],
+      "id": "d286b4ad",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

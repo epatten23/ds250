@@ -8,5 +8,3 @@ I'm a Computer Science student at Brigham Young University-Idaho with a passion 
 For 18 months, I lived and served full-time in Curitiba, Brazil — an experience that shaped me personally and professionally in ways I'm still unpacking. I worked with diverse communities across the region, developed real cross-cultural communication and leadership skills, and picked up hands-on experience improving a data management and referral tracking system used across the region. Oh — and I became fluent in Português along the way.
 
 I'm always looking for opportunities in software engineering, data, or technical operations where I can bring both my technical skills and my people skills to the table.
-
-Let's connect if you're working on something meaningful.

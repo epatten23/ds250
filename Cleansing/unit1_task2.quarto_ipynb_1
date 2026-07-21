@@ -1,0 +1,173 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Client Report - What's in a Name?\"\n",
+        "subtitle: \"Unit 1 Task 2\"\n",
+        "author: \"Ella Patten\"\n",
+        "format:\n",
+        "  html:\n",
+        "    self-contained: true\n",
+        "    page-layout: full\n",
+        "    title-block-banner: true\n",
+        "    toc: true\n",
+        "    toc-depth: 3\n",
+        "    toc-location: body\n",
+        "    number-sections: false\n",
+        "    html-math-method: katex\n",
+        "    code-fold: true\n",
+        "    code-summary: \"Show the code\"\n",
+        "    code-overflow: wrap\n",
+        "    code-copy: hover\n",
+        "    code-tools:\n",
+        "        source: false\n",
+        "        toggle: true\n",
+        "        caption: See code\n",
+        "execute: \n",
+        "  warning: false\n",
+        "    \n",
+        "---"
+      ],
+      "id": "84bb7926"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import polars as pl\n",
+        "import numpy as np\n",
+        "from lets_plot import *\n",
+        "\n",
+        "LetsPlot.setup_html(isolated_frame=True)"
+      ],
+      "id": "2fdce055",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n",
+        "\n",
+        "# Include and execute your code here\n",
+        "df = pl.read_csv(\"https://posit.byui.edu/content/0d43d66f-d3b7-4c43-8c36-52e3ed69e7f1/names_year_csv.csv\")"
+      ],
+      "id": "be0b0277",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 1\n",
+        "\n",
+        "<!-- Make sure at least one of your charts includes reference marks!! -->\n",
+        "\n",
+        "__How does your name at your birth year compare to its use historically? Your must provide a chart. The years labels on your charts should not include a comma.__ \n",
+        "\n",
+        "Here this red dot marks the year that I was born. We can see that my name was used when it was almost at its peak and was very popular in the years surrounding my birth year. "
+      ],
+      "id": "e250527e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Q1\n",
+        "ella = df.filter(pl.col(\"name\")==\"Ella\")\n",
+        "(ggplot(ella, aes(x=\"year\", y=\"Total\")) \n",
+        "+ geom_line() \n",
+        "+ geom_point(data= ella.filter(pl.col(\"year\") == 2005), color=\"red\",size = 4)\n",
+        "+ labs(title = \"Usage of the Name 'Tiana' Over Time\", x=\"Year\", y = \"Usage of the name Ella\")\n",
+        "+ scale_x_continuous(format=\"{d}\")\n",
+        ")"
+      ],
+      "id": "56506ea8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 2\n",
+        "\n",
+        "__Think of a unique name from a famous movie. Plot the usage of that name and see how changes line up with the movie release. Does it look like the movie had an effect on usage?__  \n",
+        "\n",
+        "The green dot marks when the movie \"Princess and the Frog\" was released, with the main character being named Tiana. We can see that after the movie was released, the name was used more frequently, but still not as frequently as the years before the movie was even released. "
+      ],
+      "id": "d29905fd"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Q2\n",
+        "\n",
+        "Tiana = df.filter(pl.col(\"name\")==\"Tiana\")\n",
+        "(ggplot(Tiana, aes(x=\"year\", y=\"Total\")) \n",
+        "+ geom_line() \n",
+        "+ geom_point(data= Tiana.filter(pl.col(\"year\") == 2009), color=\"green\",size = 4)\n",
+        "+ labs(title = \"Usage of the Name 'Tiana' Over Time\", x=\"Year\", y = \"Usage of the name Tiana\")\n",
+        "+ scale_x_continuous(format=\"{d}\")\n",
+        ")"
+      ],
+      "id": "18e2eafc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## QUESTION 3\n",
+        "\n",
+        "__Mary, Martha, Peter, and Paul are all Christian names. From 1920 - 2000, compare the name usage of each of the four names in a single chart. What trends do you notice?__  \n",
+        "\n",
+        "While not all of the names have the same amount of uses, they have a similar trend in that between 1920 and 1970 they were used frequently and after 1970 they began to be used less and less frequently as the population drifted a little from common and traditional names. "
+      ],
+      "id": "b638ea08"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Q3\n",
+        "old_names = df.filter(\n",
+        "  (pl.col(\"name\").is_in([\"Mary\", \"Martha\", \"Peter\", \"Paul\"])))\n",
+        "(ggplot(old_names, aes(x=\"year\", y=\"Total\", color = \"name\")) \n",
+        "+ geom_line()\n",
+        "+ labs(title = \"Usage of the Names 'Mary', 'Martha', 'Peter', and 'Paul' Over Time\", x=\"Year\", y = \"Total\")\n",
+        "\n",
+        "+ scale_x_continuous(limits=(1920,2000), format=\"{d}\")\n",
+        ")"
+      ],
+      "id": "2423bea1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<!-- Make sure at least one of your charts includes reference marks!! -->"
+      ],
+      "id": "b233ca86"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "C:\\Users\\ellap\\AppData\\Local\\Python\\pythoncore-3.14-64\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
