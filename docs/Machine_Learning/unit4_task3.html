@@ -4347,7 +4347,7 @@ vertical-align: -.125em;
   <li><a href="#question-2" id="toc-question-2">QUESTION 2</a></li>
   </ul>
 </nav>
-<div id="7c6d887a" class="cell" data-execution_count="1">
+<div id="95eead39" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -4365,7 +4365,7 @@ vertical-align: -.125em;
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="3b71404b" class="cell" data-execution_count="2">
+<div id="2c3b2a54" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import your data here using polars and the URL</span></span>
@@ -4394,7 +4394,7 @@ vertical-align: -.125em;
 <p>1 Random Forest Classifier (original): Builds different decision trees and combines their answers. This model handles messy data well and doesn’t tend to overfit.</p>
 <p>2 Logistic Regression: A simpler model that draws a straight line to separate the two groups. It’s easier to understand but can struggle when data has complex patterns.</p>
 <p>3 Gradient Boosting Classifier: Builds trees one at a time and each new tree fixes the mistakes of the previous one. It’s usually very accurate but takes longer to train.</p>
-<div id="c8144d8c" class="cell" data-execution_count="3">
+<div id="602e9a05" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
@@ -4423,9 +4423,9 @@ vertical-align: -.125em;
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Accuracy of the three different models:
-Random Forest: 0.9173697992435264
-Logistic Regression 0.849432644748327
-Gradient Boosting: 0.8855106197265057</code></pre>
+Random Forest: 0.9227524003491417
+Logistic Regression 0.8529240616816992
+Gradient Boosting: 0.8938027349432645</code></pre>
 </div>
 </div>
 </section>
@@ -4435,7 +4435,7 @@ Gradient Boosting: 0.8855106197265057</code></pre>
 <li><strong>For each model (your original one, and the 2 new ones for this task), display the classification report and the permutation importances for the most important features. Discuss which model you would recommend to the Client and why.</strong></li>
 </ol>
 <p>All three models performed well, but the Random Forest and Gradient Boosting models were stronger than Logistic Regression. Across all three models, features like living area and number of stories consistently showed up as the most important. Ultimately, I would recommend the Gradient Boosting Classifier to the client since it had the best overall scores in the classification report, meaning it made the fewest mistakes when predicting whether a home was built before 1980.</p>
-<div id="7a142041" class="cell" data-execution_count="4">
+<div id="4646d25e" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
@@ -4467,53 +4467,53 @@ Gradient Boosting: 0.8855106197265057</code></pre>
 <pre><code>Random forest (original) classification report
                precision    recall  f1-score   support
 
-1980 or After       0.89      0.89      0.89      2578
-  Before 1980       0.93      0.93      0.93      4296
+1980 or After       0.89      0.90      0.90      2578
+  Before 1980       0.94      0.94      0.94      4296
 
      accuracy                           0.92      6874
-    macro avg       0.91      0.91      0.91      6874
+    macro avg       0.92      0.92      0.92      6874
  weighted avg       0.92      0.92      0.92      6874
 
 Top 5 Importances (Random Forest):
-  stories: 0.1367
-  numbaths: 0.0902
-  basement: 0.0662
-  livearea: 0.0634
-  gartype_Att: 0.0487
+  stories: 0.1355
+  numbaths: 0.0820
+  livearea: 0.0642
+  basement: 0.0637
+  gartype_Att: 0.0599
 /n/n
 Logistic Regression classification report
                precision    recall  f1-score   support
 
-1980 or After       0.80      0.79      0.80      2578
-  Before 1980       0.88      0.88      0.88      4296
+1980 or After       0.81      0.79      0.80      2578
+  Before 1980       0.87      0.89      0.88      4296
 
      accuracy                           0.85      6874
     macro avg       0.84      0.84      0.84      6874
  weighted avg       0.85      0.85      0.85      6874
 
 Top 5 Importances (Logistic Regression):
-  numbaths: 0.1313
-  stories: 0.0683
-  quality_C: 0.0625
-  finbsmnt: 0.0446
-  numbdrm: 0.0376
+  numbaths: 0.1312
+  stories: 0.0643
+  quality_C: 0.0630
+  finbsmnt: 0.0439
+  numbdrm: 0.0342
 /n/n
 Gradient boosting classification report
                precision    recall  f1-score   support
 
-1980 or After       0.86      0.83      0.84      2578
-  Before 1980       0.90      0.92      0.91      4296
+1980 or After       0.87      0.84      0.86      2578
+  Before 1980       0.91      0.93      0.92      4296
 
      accuracy                           0.89      6874
-    macro avg       0.88      0.87      0.88      6874
- weighted avg       0.88      0.89      0.89      6874
+    macro avg       0.89      0.88      0.89      6874
+ weighted avg       0.89      0.89      0.89      6874
 
 Top 5 Importances (Gradient Boosting):
-  stories: 0.0949
-  numbaths: 0.0628
-  quality_C: 0.0417
-  gartype_Att: 0.0342
-  basement: 0.0209</code></pre>
+  stories: 0.1005
+  numbaths: 0.0598
+  quality_C: 0.0411
+  gartype_Att: 0.0337
+  finbsmnt: 0.0277</code></pre>
 </div>
 </div>
 

@@ -4357,7 +4357,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#results" id="toc-results">Results</a></li>
   </ul>
 </nav>
-<div id="76ea66b3" class="cell" data-execution_count="1">
+<div id="dacb5cdf" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl </span>
@@ -4374,7 +4374,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <!-- The first 10 rows are not part of the datset we need.
 
 The columns headers are split across two rows. We need to clean and simplify the column headers-->
-<div id="5734dcd5" class="cell" data-execution_count="2">
+<div id="1a888448" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in and tidy up the first row</span></span>
@@ -4410,7 +4410,7 @@ The columns headers are split across two rows. We need to clean and simplify the
 </details>
 </div>
 <!-- Combine series q and a into one series to be used as column names-->
-<div id="fb2582c4" class="cell" data-execution_count="3">
+<div id="37d4fb44" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> pl.Series(pl.read_csv(data_url, skip_rows <span class="op">=</span> <span class="dv">11</span>, n_rows<span class="op">=</span><span class="dv">1</span>, has_header<span class="op">=</span><span class="va">False</span>, encoding <span class="op">=</span> <span class="st">&#39;utf8-lossy&#39;</span>).row(<span class="dv">0</span>))</span>
@@ -4424,7 +4424,7 @@ The columns headers are split across two rows. We need to clean and simplify the
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="251f9063" class="cell" data-execution_count="4">
+<div id="d5d30ace" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Now combine the two series, each of which contains part of the desired column header</span></span>
@@ -4445,7 +4445,7 @@ The columns headers are split across two rows. We need to clean and simplify the
 <h2 class="anchored" data-anchor-id="methods">Methods</h2>
 <p>this is a high level overview of the methods used in the analysis. This should include an explanation of data preparation steps, especially how you dealt with each categorical variable and why. Showing the resulting or original distribution of variables may be helpful. Describe how you handled missing values and outliers. How did/might your decisions impact results? Explain any feature engineering steps you took. This is also where you will put the graphs you recreated to show you validated the dataset and that it matches the article.</p>
 <p>Regex is used to parse the email column and extract each respondent’s first name, last name, and email domain into separate columns. Each pattern uses markers in the email — such as the start of a string and the @ symbol — to isolate the relevant text.</p>
-<div id="b4d602bd" class="cell" data-execution_count="5">
+<div id="bad77a1a" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract first name, last name, and email domain from the email column</span></span>
@@ -4517,7 +4517,7 @@ white-space: pre-wrap;
 </div>
 </div>
 <p>Here we count the email domains, normalizing all domains to lowercase before grouping, since the raw data contains inconsistent capitalization. This ensures that variations of the same domain are counted together rather than treated as separate entries.</p>
-<div id="e3ba989c" class="cell" data-execution_count="6">
+<div id="b070988b" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Unique email domain count</span></span>
@@ -4563,7 +4563,7 @@ white-space: pre-wrap;
 </div>
 </div>
 <p>The dataset is filtered to respondents who have seen at least one Star Wars film. Rather than relying on the self-reported <code>seen_any</code> column, we check the six individual film columns directly — if any are non-null, the respondent has seen at least one film.</p>
-<div id="490f3e05" class="cell" data-execution_count="7">
+<div id="3b73b96b" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Respondents who have seen at least one Star Wars film</span></span>
@@ -4601,7 +4601,7 @@ white-space: pre-wrap;
 </div>
 </div>
 <p>Here we pull apart the answers that are numbers yet currently formatted as strings and turn them into numbers. When it’s a range the data point set is the lowest number in the range. The categories must be numeric for machine learning, so each category is mapped to an integer. This preserves the ordering of each variable and keeps the conversion simple and consistent. Now we can use ‘df_for_ml’ as our machine learning ready data set!</p>
-<div id="e66aa4bd" class="cell" data-execution_count="8">
+<div id="c616ef53" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Age</span></span>
@@ -4816,7 +4816,7 @@ white-space: pre-wrap;
 <h2 class="anchored" data-anchor-id="results">Results</h2>
 <p>this is a more in-depth explanation of results. A classification report and feature importance graphs belong here. <em>type your report here, you will likely want multiple code chunks and text intermingled</em></p>
 <p>Here is the shape of the table for all the respondents who have seen at least one film, adding up to a total of 835.</p>
-<div id="92dd25f4" class="cell" data-execution_count="9">
+<div id="a4f2b4b2" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Shape of table for respondents who have seen at least one Star Wars film</span></span>

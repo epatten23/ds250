@@ -1,89 +1,57 @@
 ---
-layout: cv
-title: Isaac Newtons's CV
+title: "Ella Patten's Resume"
 ---
-# Isaac Newton
-Physicist, Mathematician, Cambridge professor.
 
-<div id="webaddress">
-<a href="isaac@applesdofall.org">isaac@applesdofall.org</a>
-| <a href="http://en.wikipedia.org/wiki/Isaac_Newton">My wikipedia page</a>
-</div>
+# Ella Patten
 
-
-## Currently
-
-Standing on the shoulders of giants
-
-### Specialized in
-
-Laws of motion, gravitation, minting coins, disliking [Robert Hooke](http://en.wikipedia.org/wiki/Robert_Hooke)
-
-
-### Research interests
-
-Cooling, power series, optics, alchemy, planetary motions, apples.
-
+(720) 485-7499 | [ellapatten05@gmail.com](mailto:ellapatten05@gmail.com) | [linkedin.com/in/ellapatten](https://www.linkedin.com/in/ellapatten) | Littleton, CO
 
 ## Education
 
-`1654-1660`
-__The King's School, Grantham.__
+**Brigham Young University – Idaho** | Rexburg, ID | Expected Graduation: 2027\
+Bachelor of Science, Computer Science
 
-`June 1661 - now`
-__Trinity College, Cambridge__
+## Experience
 
-- Sizar
+**Volunteer Missionary** | The Church of Jesus Christ of Latter-day Saints | Curitiba, Brazil\
+*Sep 2024 – Mar 2026*
 
-`1667 - death`
-__Trinity College, Cambridge__
+- Taught and communicated daily in Brazilian Portuguese across culturally diverse communities
+- Led and co-led trainings for groups of 50+ volunteers in a high-accountability environment
+- Built and optimized a regional data management and referral tracking system using Google Apps Script
+- Developed cross-cultural communication, adaptability, and team leadership over 18 months
 
-- Fellow
+**Software Engineer Intern** | USAA | San Antonio, TX\
+*May 2024 – Aug 2024*
 
+- Reduced memory and CPU utilization by ~10% by identifying and retiring obsolete APIs
+- Simplified architecture by implementing 20 circuit breakers, improving system resilience
+- Streamlined call center workflow by eliminating redundant processes, improving team efficiency
+- Worked within an Agile/Scrum environment, participating in daily standups and sprint planning
 
+**Receptionist** | Brigham Young University – Idaho | Rexburg, ID\
+*Sep 2023 – May 2024*
+
+- Managed inbound call volume and routed work orders to academic advisors
+- Assisted students with academic and administrative inquiries
+
+**Administrative Assistant** | Davis Consulting Inc. | Littleton, CO\
+*Sep 2022 – May 2024*
+
+- Organized and secured confidential client tax files for a professional tax consulting firm
+
+## Technical Skills
+
+**Languages & Frameworks:** Python, JavaScript, HTML, SQL, Google Apps Script\
+**Tools & Platforms:** Git, GitHub, Agile/Scrum\
+**Certifications:** PCAP (Associate in Python), PCEP (Entry-Level Python), TestOut Network Pro, TestOut PC Pro\
+**Soft Skills:** Cross-Cultural Communication, Team Leadership, Public Speaking, Adaptability, Problem Solving
+
+## Languages
+
+**English** (Native) **Brazilian Portuguese** (Fluent — 18 months immersive experience in Curitiba, Brazil)
 
 ## Awards
 
-`2012`
-President, *Royal Society*, London, UK
-
-Associate, *French Academy of Science*, Paris, France
-
-
-
-## Publications
-
-<!-- A list is also available [online](http://scholar.google.co.uk/citations?user=LTOTl0YAAAAJ) -->
-
-### Journals
-
-`1669`
-Newton Sir I, De analysi per æquationes numero terminorum infinitas. 
-
-`1669`
-Lectiones opticæ.
-
-etc. etc. etc.
-
-### Patents
-
-`2012`
-Infinitesimal calculus for solutions to physics problems, [SMBC](http://www.techdirt.com/articles/20121011/09312820678/if-patents-had-been-around-time-newton.shtml) patent 001
-
-
-## Occupation
-
-`1600`
-__Royal Mint__, London
-
-- Warden
-- Minted coins
-
-`1600`
-__Lucasian professor of Mathematics__, Cambridge University
-
-
-
-<!-- ### Footer
-
-Last updated: May 2013 -->
+**Outstanding Young Woman in STEM** – IX Power Foundation | Feb 2022\
+*Recognized for exceptional achievement and leadership in the STEM field.*

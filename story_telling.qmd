@@ -1,10 +1,8 @@
 ---
-title: "about me"
-subtitle: "my data science portfolio"
-# use quarto markdown to 
+title: "Story Telling"
+subtitle: "Unit 3 — Baseball Dataset"
 ---
 
-# Title 1 Header
-## Title 2 Header
+This section showcases my Unit 3 coursework for DS 250, focused on using data to tell a clear, compelling story.
 
-[MarkDown Basics](https://quarto.org/docs/authoring/markdown-basics.html#links-images)
+Browse the tasks in the sidebar to see my work.

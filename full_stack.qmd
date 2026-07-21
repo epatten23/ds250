@@ -1,10 +1,8 @@
 ---
-title: "about me"
-subtitle: "my data science portfolio"
-# use quarto markdown to 
+title: "Full Stack"
+subtitle: "Unit 5 — Star Wars Dataset"
 ---
 
-# Title 1 Header
-## Title 2 Header
+This section showcases my Unit 5 coursework for DS 250, bringing together data work with a full-stack application.
 
-[MarkDown Basics](https://quarto.org/docs/authoring/markdown-basics.html#links-images)
+Browse the tasks in the sidebar to see my work.
