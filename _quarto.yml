@@ -115,11 +115,8 @@ website:
         - text: "Full Stack"
           file: full_stack.qmd
         - text: "---"
-        - text: "Unit 5: Star Wars Task 1"
-          file: Full_Stack/unit5_task1.qmd
-        - text: "---"
-        - text: "Unit 5: Star Wars Task 2"
-          file: Full_Stack/unit5_task2.qmd
+        - text: "Unit 5: Star Wars Final Report"
+          file: Full_Stack/unit5_final_report.qmd
         - text: "---"
     - title: "Competition"
       style: "docked"
